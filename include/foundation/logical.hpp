@@ -64,7 +64,7 @@ class Effort {
     Effort& operator*=(Nat m) { _m*=m; return *this; }
     friend OutputStream& operator<<(OutputStream& os, Effort eff) { return os << "Effort(" << eff._m << ")"; }
 };
-inline Effort operator""_eff(unsigned long long int e) { Nat m=e; assert(m==e); return Effort(m); }
+inline Effort operator""_eff(unsigned long long int e) { Nat m=static_cast<Nat>(e); assert(m==e); return Effort(m); }
 
 namespace Detail {
 
