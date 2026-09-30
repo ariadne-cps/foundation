@@ -180,8 +180,6 @@ OutputStream& operator<<(OutputStream& os, LogicalValue l) {
 
 } // namespace Detail
 
-Nat Effort::_default = 0u;
-
 const Indeterminate indeterminate = Indeterminate();
 
 Bool NondeterministicBoolean::_choose(LowerKleenean p1, LowerKleenean p2) {

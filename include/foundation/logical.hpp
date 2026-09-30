@@ -46,7 +46,7 @@ template<class T> String class_name();
 //! \details The Effort should roughly reflect the time needed to perform a computation.
 //! \sa Accuracy.
 class Effort {
-    static Nat _default;
+    inline static Nat _default = 0u;
     Nat _m;
   public:
     //! \brief Get the default effort. Initially set to the minimum possible effort 0.
