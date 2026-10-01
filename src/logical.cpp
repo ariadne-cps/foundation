@@ -1,5 +1,5 @@
 /***************************************************************************
- *            foundation/logical.cpp
+ *            paradigm/logical.cpp
  *
  *  Copyright  2013-20  Pieter Collins
  *
@@ -10,7 +10,7 @@
  *
  *  Ariadne is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
+ *  the __FREE_SOFTWARE_PARADIGM__, either version 3 of the License, or
  *  (at your option) any later version.
  *
  *  Ariadne is distributed in the hope that it will be useful,
@@ -22,14 +22,14 @@
  *  along with Ariadne.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/*! \file foundation/logical.cpp
+/*! \file paradigm/logical.cpp
  *  \brief
  */
 
 #include "utility/stdlib.hpp"
 #include "utility/string.hpp"
 #include "utility/macros.hpp"
-#include "foundation/logical.hpp"
+#include "paradigm/logical.hpp"
 
 namespace Ariadne {
 

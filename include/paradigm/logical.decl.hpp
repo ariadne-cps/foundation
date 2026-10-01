@@ -1,5 +1,5 @@
 /***************************************************************************
- *            foundation/logical.decl.hpp
+ *            paradigm/logical.decl.hpp
  *
  *  Copyright  2013-20  Pieter Collins
  *
@@ -10,7 +10,7 @@
  *
  *  Ariadne is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
+ *  the __FREE_SOFTWARE_PARADIGM__, either version 3 of the License, or
  *  (at your option) any later version.
  *
  *  Ariadne is distributed in the hope that it will be useful,
@@ -22,7 +22,7 @@
  *  along with Ariadne.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/*! \file foundation/logical.decl.hpp
+/*! \file paradigm/logical.decl.hpp
  *  \brief
  */
 
@@ -31,7 +31,7 @@
 #ifndef ARIADNE_LOGICAL_DECL_HPP
 #define ARIADNE_LOGICAL_DECL_HPP
 
-#include "foundation/paradigm.hpp"
+#include "paradigm/paradigm.hpp"
 
 namespace Ariadne {
 

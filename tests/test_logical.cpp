@@ -10,7 +10,7 @@
  *
  *  Ariadne is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
+ *  the __FREE_SOFTWARE_PARADIGM__, either version 3 of the License, or
  *  (at your option) any later version.
  *
  *  Ariadne is distributed in the hope that it will be useful,
@@ -23,8 +23,8 @@
  */
 
 #include "utility/metaprogramming.hpp"
-#include "foundation/paradigm.hpp"
-#include "foundation/logical.hpp"
+#include "paradigm/paradigm.hpp"
+#include "paradigm/logical.hpp"
 
 #include "utility/test.hpp"
 

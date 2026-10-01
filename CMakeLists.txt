@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(Foundation VERSION 1.0)
+project(Paradigm VERSION 1.0)
 
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
 
@@ -26,30 +26,30 @@ endif()
 
 include_directories(SYSTEM ${PROJECT_SOURCE_DIR}/include)
 
-if(NOT TARGET foundation)
+if(NOT TARGET paradigm)
     add_subdirectory(submodules)
 
-    add_library(foundation INTERFACE)
-    target_include_directories(foundation INTERFACE
+    add_library(paradigm INTERFACE)
+    target_include_directories(paradigm INTERFACE
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include/ariadne-foundation>
+        $<INSTALL_INTERFACE:include/ariadne-paradigm>
     )
-    target_link_libraries(foundation INTERFACE utility)
+    target_link_libraries(paradigm INTERFACE utility)
 
     add_subdirectory(src)
-    target_link_libraries(FOUNDATION_SRC PRIVATE foundation)
+    target_link_libraries(PARADIGM_SRC PRIVATE paradigm)
 endif()
 
 setup_project_library(
-    TARGET ariadne-foundation
+    TARGET ariadne-paradigm
     OBJECTS
-        FOUNDATION_SRC
+        PARADIGM_SRC
         UTILITY_SRC
-    LINK_LIBRARIES foundation
+    LINK_LIBRARIES paradigm
 )
 
 setup_standalone_project_tests(
-    TARGET ariadne-foundation
+    TARGET ariadne-paradigm
     TEST_DIRECTORY tests
     TEST_TARGET tests
     SOURCES
@@ -60,10 +60,10 @@ setup_standalone_project_tests(
 if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
     get_target_property(UTILITY_SOURCE_DIR utility SOURCE_DIR)
 
-    install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/foundation"
-        DESTINATION include/ariadne-foundation
+    install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/paradigm"
+        DESTINATION include/ariadne-paradigm
     )
     install(DIRECTORY "${UTILITY_SOURCE_DIR}/include/utility"
-        DESTINATION include/ariadne-foundation
+        DESTINATION include/ariadne-paradigm
     )
 endif()

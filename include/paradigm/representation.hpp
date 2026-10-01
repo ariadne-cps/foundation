@@ -1,5 +1,5 @@
 /***************************************************************************
- *            foundation/representation.hpp
+ *            paradigm/representation.hpp
  *
  *  Copyright  2026  Pieter Collins
  *
@@ -10,12 +10,12 @@
  *
  *  Ariadne is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
+ *  the __FREE_SOFTWARE_PARADIGM__, either version 3 of the License, or
  *  (at your option) any later version.
  */
 
-#ifndef ARIADNE_FOUNDATIONS_REPRESENTATION_HPP
-#define ARIADNE_FOUNDATIONS_REPRESENTATION_HPP
+#ifndef ARIADNE_PARADIGM_REPRESENTATION_HPP
+#define ARIADNE_PARADIGM_REPRESENTATION_HPP
 
 #include "utility/typedefs.hpp"
 
@@ -46,4 +46,4 @@ template<class T> inline OutputStream& operator<<(OutputStream& os, Representati
 
 } // namespace Ariadne
 
-#endif /* ARIADNE_FOUNDATIONS_REPRESENTATION_HPP */
+#endif /* ARIADNE_PARADIGM_REPRESENTATION_HPP */
