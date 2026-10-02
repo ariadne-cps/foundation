@@ -12,6 +12,7 @@
 
 #include "utility/string.hpp"
 #include "utility/typedefs.hpp"
+#include "paradigm/representation.hpp"
 
 namespace Ariadne {
 
@@ -27,6 +28,13 @@ OutputStream& operator<<(OutputStream& os, const PythonRepresentation<T>& repr) 
 template<class T>
 OutputStream& operator<=(OutputStream& os, T const& value) {
     return os << python_representation(value);
+}
+
+template<class T>
+std::string __crepr__(const T& value) {
+    std::stringstream ss;
+    ss << representation(value);
+    return ss.str();
 }
 
 } // namespace Ariadne
