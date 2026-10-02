@@ -37,7 +37,7 @@ if(Python3_FOUND)
         install(TARGETS pyariadne-paradigm DESTINATION "${PYTHON_BINDINGS_INSTALL_DIR}")
 
         add_subdirectory(test)
-        add_dependencies(everything pyariadne-paradigm)
+        add_dependencies(bindings pyariadne-paradigm)
     endif()
 else()
     if(PYTHON_ENFORCE_TESTS)
