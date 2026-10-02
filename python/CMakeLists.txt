@@ -29,7 +29,7 @@ if(Python3_FOUND)
             $<TARGET_OBJECTS:UTILITY_SRC>
             $<TARGET_OBJECTS:PARADIGM_SRC>
         )
-        set_target_properties(pyariadne-paradigm PROPERTIES OUTPUT_NAME "pyariadne_paradigm")
+        set_target_properties(pyariadne-paradigm PROPERTIES OUTPUT_NAME "pyariadne")
         target_link_libraries(pyariadne-paradigm PRIVATE paradigm)
 
         set(PYTHON_BINDINGS_INSTALL_DIR "${Python3_SITEARCH}"

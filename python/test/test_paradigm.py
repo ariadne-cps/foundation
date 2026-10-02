@@ -1,4 +1,4 @@
-import pyariadne_paradigm as paradigm
+import pyariadne as paradigm
 
 
 def test_boolean_bindings():

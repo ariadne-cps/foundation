@@ -9,6 +9,6 @@
 
 void paradigm_submodule(pybind11::module& module);
 
-PYBIND11_MODULE(pyariadne_paradigm, module) {
+PYBIND11_MODULE(pyariadne, module) {
     paradigm_submodule(module);
 }
