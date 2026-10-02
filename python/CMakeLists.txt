@@ -20,24 +20,22 @@ if(Python3_FOUND)
         )
     endif()
 
-    add_subdirectory(source)
+    add_subdirectory(bindings)
 
     if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
-        pybind11_add_module(pyariadne-paradigm
+        pybind11_add_module(pyariadne
             $<TARGET_OBJECTS:pyariadne-paradigm-module-obj>
-            $<TARGET_OBJECTS:pyariadne-paradigm-submodule-obj>
             $<TARGET_OBJECTS:UTILITY_SRC>
             $<TARGET_OBJECTS:PARADIGM_SRC>
         )
-        set_target_properties(pyariadne-paradigm PROPERTIES OUTPUT_NAME "pyariadne")
-        target_link_libraries(pyariadne-paradigm PRIVATE paradigm)
+        target_link_libraries(pyariadne PRIVATE pyariadne-paradigm paradigm)
 
         set(PYTHON_BINDINGS_INSTALL_DIR "${Python3_SITEARCH}"
             CACHE STRING "Install destination for Python targets")
-        install(TARGETS pyariadne-paradigm DESTINATION "${PYTHON_BINDINGS_INSTALL_DIR}")
+        install(TARGETS pyariadne DESTINATION "${PYTHON_BINDINGS_INSTALL_DIR}")
 
-        add_subdirectory(test)
-        add_dependencies(bindings pyariadne-paradigm)
+        add_subdirectory(tests)
+        add_dependencies(bindings pyariadne)
     endif()
 else()
     if(PYTHON_ENFORCE_TESTS)

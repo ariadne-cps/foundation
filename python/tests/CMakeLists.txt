@@ -28,10 +28,10 @@ if(PYTHON_TESTS)
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
     )
     set_property(TEST test_python_paradigm PROPERTY
-        ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:pyariadne-paradigm>"
+        ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:pyariadne>"
     )
     set_property(TEST test_python_paradigm PROPERTY LABELS "python")
 
-    add_dependencies(test_python_paradigm pyariadne-paradigm)
-    add_dependencies(tests pyariadne-paradigm)
+    add_dependencies(test_python_paradigm pyariadne)
+    add_dependencies(tests pyariadne)
 endif()

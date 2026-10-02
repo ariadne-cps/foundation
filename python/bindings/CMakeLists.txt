@@ -16,8 +16,8 @@ target_link_libraries(pyariadne-paradigm-submodule-obj PRIVATE
 )
 set_target_properties(pyariadne-paradigm-submodule-obj PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-add_library(pyariadne-paradigm-python INTERFACE)
-target_sources(pyariadne-paradigm-python INTERFACE
+add_library(pyariadne-paradigm INTERFACE)
+target_sources(pyariadne-paradigm INTERFACE
     $<TARGET_OBJECTS:pyariadne-paradigm-submodule-obj>
 )
 
