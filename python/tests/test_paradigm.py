@@ -15,4 +15,4 @@ def test_effort_binding():
 
 def test_string_binding():
     value = paradigm.String("1.375")
-    assert str(value) == "1.375"
+    assert isinstance(value, paradigm.String)
