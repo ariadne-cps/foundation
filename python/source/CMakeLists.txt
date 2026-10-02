@@ -16,6 +16,11 @@ target_link_libraries(pyariadne-paradigm-submodule-obj PRIVATE
 )
 set_target_properties(pyariadne-paradigm-submodule-obj PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
+add_library(pyariadne-paradigm-python INTERFACE)
+target_sources(pyariadne-paradigm-python INTERFACE
+    $<TARGET_OBJECTS:pyariadne-paradigm-submodule-obj>
+)
+
 if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
     add_library(pyariadne-paradigm-module-obj OBJECT
         paradigm_module.cpp
