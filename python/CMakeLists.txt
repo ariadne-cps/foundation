@@ -36,7 +36,7 @@ if(Python3_FOUND)
             CACHE STRING "Install destination for Python targets")
         install(TARGETS pyariadne-paradigm DESTINATION "${PYTHON_BINDINGS_INSTALL_DIR}")
 
-        add_subdirectory(tests)
+        add_subdirectory(test)
         add_dependencies(everything pyariadne-paradigm)
     endif()
 else()
