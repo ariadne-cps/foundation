@@ -17,21 +17,28 @@ else()
 endif()
 
 if(PYTHON_TESTS)
-    add_custom_target(
-        test_python_paradigm
-        COMMAND "${Python3_EXECUTABLE}" -m pytest "${CMAKE_CURRENT_SOURCE_DIR}/test_paradigm.py"
-        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    set(TESTS_PYTHON
+        import
+        paradigm
     )
-    add_test(
-        NAME test_python_paradigm
-        COMMAND "${Python3_EXECUTABLE}" -m pytest "${CMAKE_CURRENT_SOURCE_DIR}/test_paradigm.py"
-        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-    )
-    set_property(TEST test_python_paradigm PROPERTY
-        ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:pyariadne>"
-    )
-    set_property(TEST test_python_paradigm PROPERTY LABELS "python")
 
-    add_dependencies(test_python_paradigm pyariadne)
+    foreach(TESTNAME ${TESTS_PYTHON})
+        add_custom_target(
+            test_python_${TESTNAME}
+            COMMAND "${Python3_EXECUTABLE}" -m pytest "${CMAKE_CURRENT_SOURCE_DIR}/test_${TESTNAME}.py"
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        )
+        add_test(
+            NAME test_python_${TESTNAME}
+            COMMAND "${Python3_EXECUTABLE}" -m pytest "${CMAKE_CURRENT_SOURCE_DIR}/test_${TESTNAME}.py"
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        )
+        set_property(TEST test_python_${TESTNAME} PROPERTY
+            ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:pyariadne>"
+        )
+        set_property(TEST test_python_${TESTNAME} PROPERTY LABELS "python")
+        add_dependencies(test_python_${TESTNAME} pyariadne)
+    endforeach()
+
     add_dependencies(tests pyariadne)
 endif()

@@ -44,6 +44,10 @@ jobs:
       working-directory: ${{runner.workspace}}/build
       run: cmake --build . --parallel --config ${{matrix.config.build-type}} --target everything
 
-    - name: Test
+    - name: Test C++
       working-directory: ${{runner.workspace}}/build
-      run: ctest -C ${{matrix.config.build-type}} --output-on-failure
+      run: ctest -C ${{matrix.config.build-type}} -LE python --output-on-failure
+
+    - name: Test Python
+      working-directory: ${{runner.workspace}}/build
+      run: ctest -C ${{matrix.config.build-type}} -L python --output-on-failure
