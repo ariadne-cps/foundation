@@ -133,9 +133,15 @@ Void export_logicals(pymodule& module) {
 
 
 
-Void paradigm_submodule(pymodule& module) {
-    export_effort(module);
+Void export_string(pymodule& module) {
+    pybind11::class_<String> string_class(module,"String");
+    string_class.def(pybind11::init<const char*>());
+    pybind11::implicitly_convertible<const char*,String>();
+}
 
+Void paradigm_submodule(pymodule& module) {
+    export_string(module);
+    export_effort(module);
     export_logicals(module);
 }
 

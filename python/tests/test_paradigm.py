@@ -11,3 +11,8 @@ def test_boolean_bindings():
 def test_effort_binding():
     effort = paradigm.Effort(1)
     effort.work()
+
+
+def test_string_binding():
+    value = paradigm.String("1.375")
+    assert str(value) == "1.375"
