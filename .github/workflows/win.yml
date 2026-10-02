@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - python-decoupling
   pull_request:
 
 jobs:
@@ -25,12 +26,19 @@ jobs:
       with:
         submodules: recursive
 
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.13"
+
+    - name: Install Python Test Dependencies
+      run: python -m pip install pytest
+
     - name: Create Build Environment
       run: cmake -E make_directory ${{runner.workspace}}/build
 
     - name: Configure CMake
       working-directory: ${{runner.workspace}}/build
-      run: cmake ${{ github.workspace }} -DWARNINGS_AS_ERRORS=ON
+      run: cmake ${{ github.workspace }} -DWARNINGS_AS_ERRORS=ON -DPYTHON_ENFORCE_TESTS=ON
 
     - name: Build
       working-directory: ${{runner.workspace}}/build

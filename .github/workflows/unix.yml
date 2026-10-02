@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - coverage
+      - python-decoupling
   pull_request:
 
 env:
@@ -40,6 +41,13 @@ jobs:
       with:
         submodules: recursive
 
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.13"
+
+    - name: Install Python Test Dependencies
+      run: python -m pip install pytest
+
     - name: Get macOS Concurrency
       if: runner.os == 'macOS'
       run: |
@@ -67,7 +75,7 @@ jobs:
 
     - name: Configure CMake
       working-directory: ${{runner.workspace}}/build
-      run: cmake ${{ github.workspace }} -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_CXX_COMPILER=${{matrix.config.cxx}} -G Ninja -DWARNINGS_AS_ERRORS=ON
+      run: cmake ${{ github.workspace }} -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_CXX_COMPILER=${{matrix.config.cxx}} -G Ninja -DWARNINGS_AS_ERRORS=ON -DPYTHON_ENFORCE_TESTS=ON
 
     - name: Build
       working-directory: ${{runner.workspace}}/build
@@ -94,7 +102,7 @@ jobs:
 
     - name: Configure CMake
       working-directory: ${{runner.workspace}}/build-tsan
-      run: cmake ${{ github.workspace }} -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=clang++-16 -DTHREAD_SANITIZER=ON -G Ninja -DWARNINGS_AS_ERRORS=ON
+      run: cmake ${{ github.workspace }} -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=clang++-16 -DTHREAD_SANITIZER=ON -DBUILD_PYTHON_BINDINGS=OFF -G Ninja -DWARNINGS_AS_ERRORS=ON
 
     - name: Build
       working-directory: ${{runner.workspace}}/build-tsan
