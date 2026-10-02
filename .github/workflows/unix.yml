@@ -6,6 +6,7 @@ on:
       - main
       - coverage
       - python-decoupling
+      - decoupled-interval
   pull_request:
 
 env:
@@ -89,3 +90,6 @@ jobs:
       working-directory: ${{runner.workspace}}/build
       run: ctest -L python --output-on-failure
 
+    - name: Install Ariadne Paradigm
+      working-directory: ${{runner.workspace}}/build
+      run: cmake --install . --prefix ${{runner.workspace}}/install

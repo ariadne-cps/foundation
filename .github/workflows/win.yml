@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - python-decoupling
+      - decoupled-interval
   pull_request:
 
 jobs:
@@ -51,3 +52,7 @@ jobs:
     - name: Test Python
       working-directory: ${{runner.workspace}}/build
       run: ctest -C ${{matrix.config.build-type}} -L python --output-on-failure
+
+    - name: Install Ariadne Paradigm
+      working-directory: ${{runner.workspace}}/build
+      run: cmake --install . --config ${{matrix.config.build-type}} --prefix "${{runner.workspace}}/install"

@@ -41,6 +41,11 @@ if(NOT TARGET paradigm)
     target_link_libraries(PARADIGM_SRC PRIVATE paradigm)
 endif()
 
+ariadne_register_public_headers(
+    TARGET paradigm
+    DIRECTORIES "${PROJECT_SOURCE_DIR}/include/paradigm"
+)
+
 setup_project_library(
     TARGET ariadne-paradigm
     OBJECTS
@@ -63,12 +68,8 @@ if(BUILD_PYTHON_BINDINGS)
 endif()
 
 if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
-    get_target_property(UTILITY_SOURCE_DIR utility SOURCE_DIR)
-
-    install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/paradigm"
-        DESTINATION include/ariadne-paradigm
-    )
-    install(DIRECTORY "${UTILITY_SOURCE_DIR}/include/utility"
+    ariadne_install_dependency_bundle(
+        TARGET paradigm
         DESTINATION include/ariadne-paradigm
     )
 endif()
