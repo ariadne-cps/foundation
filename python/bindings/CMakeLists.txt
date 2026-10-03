@@ -20,6 +20,9 @@ add_library(pyariadne-foundation INTERFACE)
 target_sources(pyariadne-foundation INTERFACE
     $<TARGET_OBJECTS:pyariadne-foundation-submodule-obj>
 )
+target_include_directories(pyariadne-foundation INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+)
 
 if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
     add_library(pyariadne-foundation-module-obj OBJECT
