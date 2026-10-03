@@ -1,5 +1,5 @@
 /***************************************************************************
- *            paradigm_submodule.cpp
+ *            foundation_submodule.cpp
  *
  *  Copyright  2008-24  Pieter Collins
  *
@@ -25,14 +25,14 @@
 #include "pybind11.hpp"
 #include <pybind11/operators.h>
 
-#include "paradigm-utilities.hpp"
+#include "foundation-utilities.hpp"
 
 #if defined(__GNUG__) && !defined(__clang__)
 #  pragma GCC diagnostic ignored "-Wattributes"
 #endif
 
 #include "utility/string.hpp"
-#include "paradigm/logical.hpp"
+#include "foundation/logical.hpp"
 
 namespace Ariadne {
 
@@ -139,7 +139,7 @@ Void export_string(pymodule& module) {
     pybind11::implicitly_convertible<const char*,String>();
 }
 
-Void paradigm_submodule(pymodule& module) {
+Void foundation_submodule(pymodule& module) {
     export_string(module);
     export_effort(module);
     export_logicals(module);

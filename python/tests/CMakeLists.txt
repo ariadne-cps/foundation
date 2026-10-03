@@ -19,7 +19,7 @@ endif()
 if(PYTHON_TESTS)
     set(TESTS_PYTHON
         import
-        paradigm
+        foundation
     )
 
     foreach(TESTNAME ${TESTS_PYTHON})

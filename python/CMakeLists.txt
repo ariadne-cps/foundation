@@ -24,11 +24,11 @@ if(Python3_FOUND)
 
     if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
         pybind11_add_module(pyariadne
-            $<TARGET_OBJECTS:pyariadne-paradigm-module-obj>
+            $<TARGET_OBJECTS:pyariadne-foundation-module-obj>
             $<TARGET_OBJECTS:UTILITY_SRC>
-            $<TARGET_OBJECTS:PARADIGM_SRC>
+            $<TARGET_OBJECTS:FOUNDATION_SRC>
         )
-        target_link_libraries(pyariadne PRIVATE pyariadne-paradigm paradigm)
+        target_link_libraries(pyariadne PRIVATE pyariadne-foundation foundation)
 
         set(PYTHON_BINDINGS_INSTALL_DIR "${Python3_SITEARCH}"
             CACHE STRING "Install destination for Python targets")

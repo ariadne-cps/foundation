@@ -1,5 +1,5 @@
 /***************************************************************************
- *            paradigm/representation.hpp
+ *            foundation/representation.hpp
  *
  *  Copyright  2026  Pieter Collins
  *
@@ -14,8 +14,8 @@
  *  (at your option) any later version.
  */
 
-#ifndef ARIADNE_PARADIGM_REPRESENTATION_HPP
-#define ARIADNE_PARADIGM_REPRESENTATION_HPP
+#ifndef ARIADNE_FOUNDATION_REPRESENTATION_HPP
+#define ARIADNE_FOUNDATION_REPRESENTATION_HPP
 
 #include "utility/typedefs.hpp"
 
@@ -46,4 +46,4 @@ template<class T> inline OutputStream& operator<<(OutputStream& os, Representati
 
 } // namespace Ariadne
 
-#endif /* ARIADNE_PARADIGM_REPRESENTATION_HPP */
+#endif /* ARIADNE_FOUNDATION_REPRESENTATION_HPP */

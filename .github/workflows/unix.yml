@@ -90,6 +90,6 @@ jobs:
       working-directory: ${{runner.workspace}}/build
       run: ctest -L python --output-on-failure
 
-    - name: Install Ariadne Paradigm
+    - name: Install Ariadne Foundation
       working-directory: ${{runner.workspace}}/build
       run: cmake --install . --prefix ${{runner.workspace}}/install

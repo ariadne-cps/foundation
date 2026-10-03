@@ -1,18 +1,18 @@
 /***************************************************************************
- *            paradigm-utilities.hpp
+ *            foundation-utilities.hpp
  *
  *  Copyright  2026  Pieter Collins
  *
  ****************************************************************************/
 
-#ifndef ARIADNE_PYTHON_PARADIGM_UTILITIES_HPP
-#define ARIADNE_PYTHON_PARADIGM_UTILITIES_HPP
+#ifndef ARIADNE_PYTHON_FOUNDATION_UTILITIES_HPP
+#define ARIADNE_PYTHON_FOUNDATION_UTILITIES_HPP
 
 #include "utilities.hpp"
 
 #include "utility/string.hpp"
 #include "utility/typedefs.hpp"
-#include "paradigm/representation.hpp"
+#include "foundation/representation.hpp"
 
 namespace Ariadne {
 
@@ -39,4 +39,4 @@ std::string __crepr__(const T& value) {
 
 } // namespace Ariadne
 
-#endif /* ARIADNE_PYTHON_PARADIGM_UTILITIES_HPP */
+#endif /* ARIADNE_PYTHON_FOUNDATION_UTILITIES_HPP */

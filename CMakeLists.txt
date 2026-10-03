@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(Paradigm VERSION 1.0)
+project(Foundation VERSION 1.0)
 
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
 option(BUILD_PYTHON_BINDINGS "Build Python bindings" ON)
@@ -27,35 +27,35 @@ endif()
 
 include_directories(SYSTEM ${PROJECT_SOURCE_DIR}/include)
 
-if(NOT TARGET paradigm)
+if(NOT TARGET foundation)
     add_subdirectory(submodules)
 
-    add_library(paradigm INTERFACE)
-    target_include_directories(paradigm INTERFACE
+    add_library(foundation INTERFACE)
+    target_include_directories(foundation INTERFACE
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include/ariadne-paradigm>
+        $<INSTALL_INTERFACE:include/ariadne-foundation>
     )
-    target_link_libraries(paradigm INTERFACE utility)
+    target_link_libraries(foundation INTERFACE utility)
 
     add_subdirectory(src)
-    target_link_libraries(PARADIGM_SRC PRIVATE paradigm)
+    target_link_libraries(FOUNDATION_SRC PRIVATE foundation)
 endif()
 
 ariadne_register_public_headers(
-    TARGET paradigm
-    DIRECTORIES "${PROJECT_SOURCE_DIR}/include/paradigm"
+    TARGET foundation
+    DIRECTORIES "${PROJECT_SOURCE_DIR}/include/foundation"
 )
 
 setup_project_library(
-    TARGET ariadne-paradigm
+    TARGET ariadne-foundation
     OBJECTS
-        PARADIGM_SRC
+        FOUNDATION_SRC
         UTILITY_SRC
-    LINK_LIBRARIES paradigm
+    LINK_LIBRARIES foundation
 )
 
 setup_standalone_project_tests(
-    TARGET ariadne-paradigm
+    TARGET ariadne-foundation
     TEST_DIRECTORY tests
     TEST_TARGET tests
     SOURCES
@@ -69,7 +69,7 @@ endif()
 
 if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
     ariadne_install_dependency_bundle(
-        TARGET paradigm
-        DESTINATION include/ariadne-paradigm
+        TARGET foundation
+        DESTINATION include/ariadne-foundation
     )
 endif()

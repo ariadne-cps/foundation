@@ -1,5 +1,5 @@
 /***************************************************************************
- *            paradigm/logical.cpp
+ *            foundation/logical.cpp
  *
  *  Copyright  2013-20  Pieter Collins
  *
@@ -22,14 +22,14 @@
  *  along with Ariadne.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/*! \file paradigm/logical.cpp
+/*! \file foundation/logical.cpp
  *  \brief
  */
 
 #include "utility/stdlib.hpp"
 #include "utility/string.hpp"
 #include "utility/macros.hpp"
-#include "paradigm/logical.hpp"
+#include "foundation/logical.hpp"
 
 namespace Ariadne {
 

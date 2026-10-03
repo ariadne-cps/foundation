@@ -1,3 +1,3 @@
-add_library(PARADIGM_SRC OBJECT
+add_library(FOUNDATION_SRC OBJECT
     logical.cpp
 )

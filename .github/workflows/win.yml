@@ -53,6 +53,6 @@ jobs:
       working-directory: ${{runner.workspace}}/build
       run: ctest -C ${{matrix.config.build-type}} -L python --output-on-failure
 
-    - name: Install Ariadne Paradigm
+    - name: Install Ariadne Foundation
       working-directory: ${{runner.workspace}}/build
       run: cmake --install . --config ${{matrix.config.build-type}} --prefix "${{runner.workspace}}/install"

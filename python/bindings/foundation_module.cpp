@@ -1,5 +1,5 @@
 /***************************************************************************
- *            paradigm_module.cpp
+ *            foundation_module.cpp
  *
  *  Copyright  2026  Pieter Collins
  *
@@ -7,8 +7,8 @@
 
 #include "pybind11.hpp"
 
-void paradigm_submodule(pybind11::module& module);
+void foundation_submodule(pybind11::module& module);
 
 PYBIND11_MODULE(pyariadne, module) {
-    paradigm_submodule(module);
+    foundation_submodule(module);
 }

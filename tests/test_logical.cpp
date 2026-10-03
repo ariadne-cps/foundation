@@ -23,8 +23,8 @@
  */
 
 #include "utility/metaprogramming.hpp"
-#include "paradigm/paradigm.hpp"
-#include "paradigm/logical.hpp"
+#include "foundation/paradigm.hpp"
+#include "foundation/logical.hpp"
 
 #include "utility/test.hpp"
 
