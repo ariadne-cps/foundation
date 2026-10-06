@@ -59,7 +59,7 @@ class UnaryLogicalExpression : public LogicalInterface {
   public:
     explicit UnaryLogicalExpression(LogicalHandle arg):_arg(arg){}
   private:
-    LogicalInterface* _copy() const override { return new UnaryLogicalExpression(*this); }
+    LogicalInterface* _copy() const override { return new UnaryLogicalExpression(_arg); }
     LogicalValue _check(Effort e) const override { return !_arg.check(e); }
     OutputStream& _write(OutputStream& os) const override { return os<<"not("<<_arg<<")"; }
 };
@@ -69,7 +69,7 @@ class BinaryLogicalExpression : public LogicalInterface {
     BinaryLogicalExpression(char const* name, BinaryLogicalOperator op, LogicalHandle lhs, LogicalHandle rhs)
         :_name(name),_op(op),_lhs(lhs),_rhs(rhs){}
   private:
-    LogicalInterface* _copy() const override { return new BinaryLogicalExpression(*this); }
+    LogicalInterface* _copy() const override { return new BinaryLogicalExpression(_name,_op,_lhs,_rhs); }
     LogicalValue _check(Effort e) const override { return _op(_lhs.check(e),_rhs.check(e)); }
     OutputStream& _write(OutputStream& os) const override { return os<<_name<<"("<<_lhs<<","<<_rhs<<")"; }
 };
