@@ -44,6 +44,18 @@ TestParadigm::test_runtime()
     ARIADNE_TEST_EQUAL(static_cast<ParadigmCodeType>(LowerTag::code()), ParadigmCodeType(1));
     ARIADNE_TEST_EQUAL(static_cast<ParadigmCodeType>(ApproximationTag::code()), ParadigmCodeType(0));
 
+    MetricTag metric_default;
+    OrderTag order_default;
+    UpperTag upper_default;
+    LowerTag lower_default;
+    ApproximationTag approximation_default;
+
+    ARIADNE_TEST_EQUAL(static_cast<ParadigmCodeType>(metric_default.code()), ParadigmCodeType(7));
+    ARIADNE_TEST_EQUAL(static_cast<ParadigmCodeType>(order_default.code()), ParadigmCodeType(3));
+    ARIADNE_TEST_EQUAL(static_cast<ParadigmCodeType>(upper_default.code()), ParadigmCodeType(2));
+    ARIADNE_TEST_EQUAL(static_cast<ParadigmCodeType>(lower_default.code()), ParadigmCodeType(1));
+    ARIADNE_TEST_EQUAL(static_cast<ParadigmCodeType>(approximation_default.code()), ParadigmCodeType(0));
+
     ValidatedTag validated;
     MetricTag metric(validated);
     OrderTag order(validated);
