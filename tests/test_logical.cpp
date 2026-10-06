@@ -26,7 +26,6 @@
 #include "utility/array.hpp"
 #include "foundation/paradigm.hpp"
 #include "foundation/logical.hpp"
-#include "foundation/representation.hpp"
 
 #include "utility/test.hpp"
 
@@ -55,30 +54,8 @@ class DelayedLogical final : public LogicalInterface {
     }
 };
 
-struct WithRepresentation {
-    Int value;
-    OutputStream& _repr(OutputStream& os) const { return os << "repr(" << value << ")"; }
-};
-
-struct PlainRepresentation {
-    Int value;
-};
-
-OutputStream& operator<<(OutputStream& os, PlainRepresentation const& object) {
-    return os << "plain(" << object.value << ")";
-}
-
 } // namespace
 
-
-class TestParadigm
-{
-  public:
-    Void test();
-  private:
-    Void test_concept();
-    Void test_runtime();
-};
 
 class TestLogical
 {
@@ -94,7 +71,6 @@ class TestLogical
     Void test_types();
     Void test_nondeterminism();
     Void test_class_names();
-    Void test_representation();
 };
 
 
@@ -102,69 +78,11 @@ Int main() {
     std::cout<<std::setprecision(20);
     std::cerr<<std::setprecision(20);
 
-    ARIADNE_TEST_CLASS(TestParadigm,TestParadigm());
     ARIADNE_TEST_CLASS(TestLogical,TestLogical());
 
     return ARIADNE_TEST_FAILURES;
 }
 
-
-Void
-TestParadigm::test()
-{
-    ARIADNE_TEST_CALL(test_runtime());
-}
-
-Void
-TestParadigm::test_runtime()
-{
-    ARIADNE_TEST_EQUAL(static_cast<ParadigmCodeType>(ApproximateTag::code()), static_cast<ParadigmCodeType>(ParadigmCode::APPROXIMATE));
-    ARIADNE_TEST_EQUAL(static_cast<ParadigmCodeType>(ValidatedTag::code()), static_cast<ParadigmCodeType>(ParadigmCode::VALIDATED));
-    ARIADNE_TEST_EQUAL(static_cast<ParadigmCodeType>(EffectiveTag::code()), static_cast<ParadigmCodeType>(ParadigmCode::EFFECTIVE));
-    ARIADNE_TEST_EQUAL(static_cast<ParadigmCodeType>(ExactTag::code()), static_cast<ParadigmCodeType>(ParadigmCode::EXACT));
-
-    ARIADNE_TEST_EQUAL(static_cast<ParadigmCodeType>(MetricTag::code()), ParadigmCodeType(7));
-    ARIADNE_TEST_EQUAL(static_cast<ParadigmCodeType>(OrderTag::code()), ParadigmCodeType(3));
-    ARIADNE_TEST_EQUAL(static_cast<ParadigmCodeType>(UpperTag::code()), ParadigmCodeType(2));
-    ARIADNE_TEST_EQUAL(static_cast<ParadigmCodeType>(LowerTag::code()), ParadigmCodeType(1));
-    ARIADNE_TEST_EQUAL(static_cast<ParadigmCodeType>(ApproximationTag::code()), ParadigmCodeType(0));
-
-    ValidatedTag validated;
-    MetricTag metric(validated);
-    OrderTag order(validated);
-    UpperTag upper(validated);
-    LowerTag lower(validated);
-    ApproximationTag approximation(validated);
-    ARIADNE_TEST_EQUAL(static_cast<ParadigmCodeType>(metric.code()), ParadigmCodeType(7));
-    ARIADNE_TEST_EQUAL(static_cast<ParadigmCodeType>(order.code()), ParadigmCodeType(3));
-    ARIADNE_TEST_EQUAL(static_cast<ParadigmCodeType>(upper.code()), ParadigmCodeType(2));
-    ARIADNE_TEST_EQUAL(static_cast<ParadigmCodeType>(lower.code()), ParadigmCodeType(1));
-    ARIADNE_TEST_EQUAL(static_cast<ParadigmCodeType>(approximation.code()), ParadigmCodeType(0));
-}
-
-// Test that the type implements all operations of
-// the FloatDP concept without testing correctness
-Void
-TestParadigm::test_concept()
-{
-    ARIADNE_TEST_CONCEPT(WeakerThan<ApproximateTag,ApproximateTag>);
-    ARIADNE_TEST_CONCEPT(WeakerThan<ApproximateTag,ValidatedTag>);
-    ARIADNE_TEST_CONCEPT(WeakerThan<ApproximateTag,EffectiveTag>);
-    ARIADNE_TEST_CONCEPT(WeakerThan<ApproximateTag,ExactTag>);
-    ARIADNE_TEST_CONCEPT(WeakerThan<ValidatedTag,ValidatedTag>);
-    ARIADNE_TEST_CONCEPT(WeakerThan<ValidatedTag,EffectiveTag>);
-    ARIADNE_TEST_CONCEPT(WeakerThan<ValidatedTag,ExactTag>);
-    ARIADNE_TEST_CONCEPT(WeakerThan<EffectiveTag,EffectiveTag>);
-    ARIADNE_TEST_CONCEPT(WeakerThan<EffectiveTag,ExactTag>);
-    ARIADNE_TEST_CONCEPT(WeakerThan<ExactTag,ExactTag>);
-
-    ARIADNE_TEST_CONCEPT(not WeakerThan<ValidatedTag,ApproximateTag>);
-    ARIADNE_TEST_CONCEPT(not WeakerThan<EffectiveTag,ApproximateTag>);
-    ARIADNE_TEST_CONCEPT(not WeakerThan<EffectiveTag,ValidatedTag>);
-    ARIADNE_TEST_CONCEPT(not WeakerThan<ExactTag,ApproximateTag>);
-    ARIADNE_TEST_CONCEPT(not WeakerThan<ExactTag,ValidatedTag>);
-    ARIADNE_TEST_CONCEPT(not WeakerThan<ExactTag,EffectiveTag>);
-}
 
 Void
 TestLogical::test()
@@ -177,7 +95,6 @@ TestLogical::test()
     ARIADNE_TEST_CALL(test_types());
     ARIADNE_TEST_CALL(test_nondeterminism());
     ARIADNE_TEST_CALL(test_class_names());
-    ARIADNE_TEST_CALL(test_representation());
 }
 
 Void
@@ -600,16 +517,4 @@ TestLogical::test_class_names()
     ARIADNE_TEST_EQUAL(class_name<ValidatedLowerKleenean>(), String("ValidatedLowerKleenean"));
     ARIADNE_TEST_EQUAL(class_name<ValidatedUpperKleenean>(), String("ValidatedUpperKleenean"));
     ARIADNE_TEST_EQUAL(class_name<ApproximateKleenean>(), String("ApproximateKleenean"));
-}
-
-Void
-TestLogical::test_representation()
-{
-    WithRepresentation with_repr { 4 };
-    Representation<WithRepresentation> wrapped = representation(with_repr);
-    ARIADNE_TEST_EQUAL(wrapped.reference().value, 4);
-    ARIADNE_TEST_EQUAL(to_string(wrapped), String("repr(4)"));
-
-    PlainRepresentation plain { 9 };
-    ARIADNE_TEST_EQUAL(to_string(representation(plain)), String("plain(9)"));
 }

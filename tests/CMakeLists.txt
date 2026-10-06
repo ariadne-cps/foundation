@@ -2,6 +2,8 @@ include(CTest)
 
 set(UNIT_TESTS
     test_logical
+    test_paradigm
+    test_representation
 )
 
 foreach(TEST ${UNIT_TESTS})
