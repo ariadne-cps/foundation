@@ -6,6 +6,7 @@
  ****************************************************************************/
 
 #include "foundation/representation.hpp"
+#include "utility/string.hpp"
 #include "utility/test.hpp"
 
 using namespace Ariadne;
