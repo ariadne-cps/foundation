@@ -25,7 +25,7 @@ if(EXISTS "${PROJECT_SOURCE_DIR}/.git")
     )
 endif()
 
-include_directories(SYSTEM ${PROJECT_SOURCE_DIR}/include)
+include_directories(${PROJECT_SOURCE_DIR}/include)
 
 if(NOT TARGET foundation)
     add_subdirectory(submodules)
