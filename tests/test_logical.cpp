@@ -29,6 +29,8 @@
 
 #include "utility/test.hpp"
 
+#include <limits>
+
 using namespace Ariadne;
 
 
@@ -196,6 +198,9 @@ TestLogical::test_effort()
 
     Effort literal = 7_eff;
     ARIADNE_TEST_EQUAL(literal.work(), Nat(7u));
+    ARIADNE_TEST_THROWS(
+        operator""_eff(static_cast<unsigned long long int>(std::numeric_limits<Nat>::max()) + 1ull),
+        std::overflow_error);
     Effort::set_default(0u);
 }
 

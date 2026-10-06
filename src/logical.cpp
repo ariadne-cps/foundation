@@ -47,49 +47,31 @@ class LogicalConstant : public LogicalInterface {
     OutputStream& _write(OutputStream& os) const override { return os << _value; }
 };
 
-enum class LogicalOperation { NOT, AND, OR, XOR, EQUAL };
+using BinaryLogicalOperator = LogicalValue (*)(LogicalValue, LogicalValue);
 
-inline char const* operation_name(LogicalOperation op) {
-    switch(op) {
-        case LogicalOperation::NOT: return "not";
-        case LogicalOperation::AND: return "and";
-        case LogicalOperation::OR: return "or";
-        case LogicalOperation::XOR: return "xor";
-        case LogicalOperation::EQUAL: return "equal";
-        default: return "logical";
-    }
-}
-inline LogicalValue apply(LogicalOperation op, LogicalValue v) {
-    return op==LogicalOperation::NOT ? !v : LogicalValue::INDETERMINATE;
-}
-inline LogicalValue apply(LogicalOperation op, LogicalValue l, LogicalValue r) {
-    switch(op) {
-        case LogicalOperation::AND: return l&&r;
-        case LogicalOperation::OR: return l||r;
-        case LogicalOperation::XOR: return l^r;
-        case LogicalOperation::EQUAL: return l==r;
-        case LogicalOperation::NOT: break;
-        default: break;
-    }
-    return LogicalValue::INDETERMINATE;
-}
+inline LogicalValue logical_and(LogicalValue l, LogicalValue r) { return l&&r; }
+inline LogicalValue logical_or(LogicalValue l, LogicalValue r) { return l||r; }
+inline LogicalValue logical_xor(LogicalValue l, LogicalValue r) { return l^r; }
+inline LogicalValue logical_equal(LogicalValue l, LogicalValue r) { return l==r; }
+
 class UnaryLogicalExpression : public LogicalInterface {
-    LogicalOperation _op; LogicalHandle _arg;
+    LogicalHandle _arg;
   public:
-    UnaryLogicalExpression(LogicalOperation op, LogicalHandle arg):_op(op),_arg(arg){}
+    explicit UnaryLogicalExpression(LogicalHandle arg):_arg(arg){}
   private:
     LogicalInterface* _copy() const override { return new UnaryLogicalExpression(*this); }
-    LogicalValue _check(Effort e) const override { return apply(_op,_arg.check(e)); }
-    OutputStream& _write(OutputStream& os) const override { return os<<operation_name(_op)<<"("<<_arg<<")"; }
+    LogicalValue _check(Effort e) const override { return !_arg.check(e); }
+    OutputStream& _write(OutputStream& os) const override { return os<<"not("<<_arg<<")"; }
 };
 class BinaryLogicalExpression : public LogicalInterface {
-    LogicalOperation _op; LogicalHandle _lhs; LogicalHandle _rhs;
+    char const* _name; BinaryLogicalOperator _op; LogicalHandle _lhs; LogicalHandle _rhs;
   public:
-    BinaryLogicalExpression(LogicalOperation op, LogicalHandle lhs, LogicalHandle rhs):_op(op),_lhs(lhs),_rhs(rhs){}
+    BinaryLogicalExpression(char const* name, BinaryLogicalOperator op, LogicalHandle lhs, LogicalHandle rhs)
+        :_name(name),_op(op),_lhs(lhs),_rhs(rhs){}
   private:
     LogicalInterface* _copy() const override { return new BinaryLogicalExpression(*this); }
-    LogicalValue _check(Effort e) const override { return apply(_op,_lhs.check(e),_rhs.check(e)); }
-    OutputStream& _write(OutputStream& os) const override { return os<<operation_name(_op)<<"("<<_lhs<<","<<_rhs<<")"; }
+    LogicalValue _check(Effort e) const override { return _op(_lhs.check(e),_rhs.check(e)); }
+    OutputStream& _write(OutputStream& os) const override { return os<<_name<<"("<<_lhs<<","<<_rhs<<")"; }
 };
 
 
@@ -108,44 +90,44 @@ LogicalHandle LogicalHandle::constant(LogicalValue l) {
 }
 
 LogicalHandle operator&&(LogicalHandle l1, LogicalHandle l2) {
-    return LogicalHandle(make_handle<const BinaryLogicalExpression>(LogicalOperation::AND,l1,l2));
+    return LogicalHandle(make_handle<const BinaryLogicalExpression>("and",logical_and,l1,l2));
 }
 
 LogicalHandle operator||(LogicalHandle l1, LogicalHandle l2) {
-    return LogicalHandle(make_handle<const BinaryLogicalExpression>(LogicalOperation::OR,l1,l2));
+    return LogicalHandle(make_handle<const BinaryLogicalExpression>("or",logical_or,l1,l2));
 }
 
 LogicalHandle operator==(LogicalHandle l1, LogicalHandle l2) {
-    return LogicalHandle(make_handle<const BinaryLogicalExpression>(LogicalOperation::EQUAL,l1,l2));
+    return LogicalHandle(make_handle<const BinaryLogicalExpression>("equal",logical_equal,l1,l2));
 }
 
 LogicalHandle operator^(LogicalHandle l1, LogicalHandle l2) {
-    return LogicalHandle(make_handle<const BinaryLogicalExpression>(LogicalOperation::XOR,l1,l2));
+    return LogicalHandle(make_handle<const BinaryLogicalExpression>("xor",logical_xor,l1,l2));
 }
 
 LogicalHandle operator!(LogicalHandle l) {
-    return LogicalHandle(make_handle<const UnaryLogicalExpression>(LogicalOperation::NOT,l));
+    return LogicalHandle(make_handle<const UnaryLogicalExpression>(l));
 }
 
 LogicalHandle conjunction(LogicalHandle l1, LogicalHandle l2) {
-    return LogicalHandle(make_handle<const BinaryLogicalExpression>(LogicalOperation::AND,l1,l2));
+    return LogicalHandle(make_handle<const BinaryLogicalExpression>("and",logical_and,l1,l2));
 }
 
 LogicalHandle disjunction(LogicalHandle l1, LogicalHandle l2) {
-    return LogicalHandle(make_handle<const BinaryLogicalExpression>(LogicalOperation::OR,l1,l2));
+    return LogicalHandle(make_handle<const BinaryLogicalExpression>("or",logical_or,l1,l2));
 }
 
 LogicalHandle negation(LogicalHandle l) {
-    return LogicalHandle(make_handle<const UnaryLogicalExpression>(LogicalOperation::NOT,l));
+    return LogicalHandle(make_handle<const UnaryLogicalExpression>(l));
 }
 
 LogicalHandle equality(LogicalHandle l1, LogicalHandle l2) {
-    return LogicalHandle(make_handle<const BinaryLogicalExpression>(LogicalOperation::EQUAL,l1,l2));
+    return LogicalHandle(make_handle<const BinaryLogicalExpression>("equal",logical_equal,l1,l2));
 }
 
 
 LogicalHandle exclusive(LogicalHandle l1, LogicalHandle l2) {
-    return LogicalHandle(make_handle<const BinaryLogicalExpression>(LogicalOperation::XOR,l1,l2));
+    return LogicalHandle(make_handle<const BinaryLogicalExpression>("xor",logical_xor,l1,l2));
 }
 
 

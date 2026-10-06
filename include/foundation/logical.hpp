@@ -29,6 +29,9 @@
 #define ARIADNE_LOGICAL_HPP
 
 #include "utility/stdlib.hpp"
+
+#include <limits>
+#include <stdexcept>
 #include "utility/typedefs.hpp"
 #include "utility/handle.hpp"
 #include "utility/string.hpp"
@@ -64,7 +67,12 @@ class Effort {
     Effort& operator*=(Nat m) { _m*=m; return *this; }
     friend OutputStream& operator<<(OutputStream& os, Effort eff) { return os << "Effort(" << eff._m << ")"; }
 };
-inline Effort operator""_eff(unsigned long long int e) { Nat m=static_cast<Nat>(e); assert(m==e); return Effort(m); }
+inline Effort operator""_eff(unsigned long long int e) {
+    if (e > static_cast<unsigned long long int>(std::numeric_limits<Nat>::max())) {
+        throw std::overflow_error("Effort literal out of range");
+    }
+    return Effort(static_cast<Nat>(e));
+}
 
 namespace Detail {
 
