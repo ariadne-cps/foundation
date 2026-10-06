@@ -213,6 +213,11 @@ TestLogical::test_logical_values()
     ARIADNE_TEST_ASSERT(same_logical_value(make_logical_value(true), LogicalValue::TRUE));
     ARIADNE_TEST_ASSERT(same_logical_value(make_logical_value(false), LogicalValue::FALSE));
 
+    ARIADNE_TEST_EQUAL(Ariadne::definitely(true), true);
+    ARIADNE_TEST_EQUAL(Ariadne::probably(false), false);
+    ARIADNE_TEST_EQUAL(Ariadne::decide(true), true);
+    ARIADNE_TEST_EQUAL(Ariadne::possibly(false), false);
+
     ARIADNE_TEST_EQUAL(definitely(LogicalValue::TRUE), true);
     ARIADNE_TEST_EQUAL(definitely(LogicalValue::LIKELY), false);
     ARIADNE_TEST_EQUAL(probably(LogicalValue::LIKELY), true);
@@ -251,6 +256,7 @@ TestLogical::test_logical_values()
     ARIADNE_TEST_EQUAL(to_string(LogicalValue::INDETERMINATE), String("indeterminate"));
     ARIADNE_TEST_EQUAL(to_string(LogicalValue::UNLIKELY), String("unlikely"));
     ARIADNE_TEST_EQUAL(to_string(LogicalValue::FALSE), String("false"));
+    ARIADNE_TEST_THROWS(to_string(static_cast<LogicalValue>(99)), std::runtime_error);
 }
 
 Void
@@ -309,6 +315,12 @@ TestLogical::test_handles()
     ARIADNE_TEST_THROWS(Detail::logical_value_from_pointer(expression_copy), std::runtime_error);
     delete expression_copy;
 
+    LogicalInterface* unary_copy = n.pointer()->_copy();
+    ARIADNE_TEST_ASSERT(same_logical_value(unary_copy->_check(effort), LogicalValue::UNLIKELY));
+    delete unary_copy;
+
+    ARIADNE_TEST_THROWS(Detail::logical_type_from_pointer<EffectiveTag>(nullptr), std::runtime_error);
+
     LogicalInterface* effective_ptr = Detail::new_logical_pointer_from_value(LogicalValue::TRUE);
     Kleenean effective = Detail::logical_type_from_pointer<EffectiveTag>(effective_ptr);
     ARIADNE_TEST_EQUAL(definitely(effective, effort), true);
@@ -351,6 +363,8 @@ TestLogical::test_types()
     ARIADNE_TEST_EQUAL(possibly(s_ind, effort), true);
     ARIADNE_TEST_EQUAL(possibly(ns_false, effort), false);
     ARIADNE_TEST_EQUAL(possibly(ns_ind, effort), true);
+    ARIADNE_TEST_EQUAL(definitely(check(s_true, effort)), true);
+    ARIADNE_TEST_EQUAL(possibly(check(ns_ind, effort)), true);
     ARIADNE_TEST_EQUAL(definitely(s_true), true);
     ARIADNE_TEST_EQUAL(probably(s_true), true);
     ARIADNE_TEST_EQUAL(decide(s_true), true);
@@ -392,6 +406,8 @@ TestLogical::test_types()
     ARIADNE_TEST_EQUAL(possibly(upper_ns.check(effort)), true);
     ARIADNE_TEST_EQUAL(possibly(upper_k.check(effort)), true);
     ARIADNE_TEST_EQUAL(possibly(upper_ind.check(effort)), true);
+    ARIADNE_TEST_EQUAL(definitely(check(lower_true, effort)), true);
+    ARIADNE_TEST_EQUAL(possibly(check(upper_false, effort)), false);
     ARIADNE_TEST_EQUAL(to_string(!lower_true), String("not(true)"));
     ARIADNE_TEST_EQUAL(to_string(!upper_false), String("not(false)"));
     ARIADNE_TEST_EQUAL(to_string(lower_true && LowerKleenean(false)), String("and(true,false)"));
@@ -418,7 +434,9 @@ TestLogical::test_types()
     ARIADNE_TEST_EQUAL(to_string(naive_bool || NaiveKleenean(false)), String("or(true,false)"));
 
     ValidatedSierpinskian vs_true(true);
+    ValidatedSierpinskian vs_false(false);
     ValidatedSierpinskian vs_from(s_true, effort);
+    ValidatedNegatedSierpinskian vns_true(true);
     ValidatedNegatedSierpinskian vns_false(false);
     ValidatedNegatedSierpinskian vns_from(ns_ind, effort);
     ValidatedKleenean vk_default;
@@ -426,17 +444,21 @@ TestLogical::test_types()
     ValidatedKleenean vk_vs(vs_true);
     ValidatedKleenean vk_vns(vns_from);
     ValidatedKleenean vk_k(k_ind, effort);
+    ValidatedLowerKleenean vl_direct_bool(true);
     ValidatedLowerKleenean vl_bool(bt);
     ValidatedLowerKleenean vl_vs(vs_true);
     ValidatedLowerKleenean vl_vk(vk_k);
     ValidatedLowerKleenean vl_lower(lower_ind, effort);
+    ValidatedUpperKleenean vu_direct_bool(false);
     ValidatedUpperKleenean vu_bool(bf);
     ValidatedUpperKleenean vu_vk(vk_k);
     ValidatedUpperKleenean vu_vns(vns_from);
     ValidatedUpperKleenean vu_upper(upper_ind, effort);
 
     ARIADNE_TEST_EQUAL(definitely(vs_true), true);
+    ARIADNE_TEST_EQUAL(definitely(vs_false), false);
     ARIADNE_TEST_EQUAL(definitely(vs_from), true);
+    ARIADNE_TEST_EQUAL(possibly(vns_true), true);
     ARIADNE_TEST_EQUAL(possibly(vns_false), false);
     ARIADNE_TEST_EQUAL(possibly(vns_from), true);
     ARIADNE_TEST_EQUAL(definitely(vk_default), true);
@@ -444,20 +466,26 @@ TestLogical::test_types()
     ARIADNE_TEST_EQUAL(definitely(vk_vs), true);
     ARIADNE_TEST_EQUAL(possibly(vk_vns), true);
     ARIADNE_TEST_EQUAL(possibly(vk_k), true);
+    ValidatedKleenean vk_and = vk_bool && vk_k;
+    ARIADNE_TEST_EQUAL(possibly(vk_and), true);
+    ARIADNE_TEST_EQUAL(definitely(vl_direct_bool), true);
     ARIADNE_TEST_EQUAL(definitely(vl_bool), true);
     ARIADNE_TEST_EQUAL(definitely(vl_vs), true);
     ARIADNE_TEST_EQUAL(possibly(vl_vk), true);
     ARIADNE_TEST_EQUAL(possibly(vl_lower), true);
+    ARIADNE_TEST_EQUAL(possibly(vu_direct_bool), false);
     ARIADNE_TEST_EQUAL(possibly(vu_bool), false);
     ARIADNE_TEST_EQUAL(possibly(vu_vk), true);
     ARIADNE_TEST_EQUAL(possibly(vu_vns), true);
     ARIADNE_TEST_EQUAL(possibly(vu_upper), true);
 
+    ApproximateKleenean ak_direct_bool(false);
     ApproximateKleenean ak_bool(bt);
     ApproximateKleenean ak_vk(vk_k);
     ApproximateKleenean ak_vl(vl_lower);
     ApproximateKleenean ak_vu(vu_upper);
     ApproximateKleenean ak_k(k_ind, effort);
+    ARIADNE_TEST_EQUAL(probably(ak_direct_bool), false);
     ARIADNE_TEST_EQUAL(probably(ak_bool), true);
     ARIADNE_TEST_EQUAL(possibly(ak_vk), true);
     ARIADNE_TEST_EQUAL(possibly(ak_vl), true);
