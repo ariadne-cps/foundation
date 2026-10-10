@@ -48,9 +48,7 @@ ariadne_register_public_headers(
 
 setup_project_library(
     TARGET ariadne-foundation
-    OBJECTS
-        FOUNDATION_SRC
-        UTILITY_SRC
+    OBJECTS FOUNDATION_SRC
     LINK_LIBRARIES foundation
 )
 
