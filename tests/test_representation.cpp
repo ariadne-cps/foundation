@@ -7,7 +7,7 @@
 
 #include "foundation/representation.hpp"
 #include "utility/string.hpp"
-#include "utility/test.hpp"
+#include "macro/testing.hpp"
 
 using namespace Ariadne;
 
