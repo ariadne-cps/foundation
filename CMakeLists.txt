@@ -5,13 +5,13 @@ project(Foundation VERSION 1.0)
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
 option(BUILD_PYTHON_BINDINGS "Build Python bindings" ON)
 
-if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/submodules/configuration/cmake/ProjectOptions.cmake")
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/ss/configuration/cmake/ProjectOptions.cmake")
     message(FATAL_ERROR
         "Git submodules are not initialized. "
         "Run 'git submodule update --init --recursive' before configuring the project.")
 endif()
 
-include("${CMAKE_CURRENT_SOURCE_DIR}/submodules/configuration/cmake/ProjectOptions.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/ss/configuration/cmake/ProjectOptions.cmake")
 
 require_initialized_submodules()
 
@@ -20,15 +20,15 @@ setup_project()
 if(EXISTS "${PROJECT_SOURCE_DIR}/.git")
     require_same_dependency_commit(Configuration
         REFERENCES
-            "${PROJECT_SOURCE_DIR}|submodules/configuration"
-            "${PROJECT_SOURCE_DIR}/submodules/utility|submodules/configuration"
+            "${PROJECT_SOURCE_DIR}|ss/configuration"
+            "${PROJECT_SOURCE_DIR}/ss/utility|ss/configuration"
     )
 endif()
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 if(NOT TARGET foundation)
-    add_subdirectory(submodules)
+    add_subdirectory(ss)
 
     add_library(foundation INTERFACE)
     target_include_directories(foundation INTERFACE
