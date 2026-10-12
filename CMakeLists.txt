@@ -28,9 +28,9 @@ endif()
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
-if(NOT TARGET foundation)
-    add_subdirectory(ss)
+add_subdirectory(ss)
 
+if(NOT TARGET foundation)
     add_library(foundation INTERFACE)
     target_include_directories(foundation INTERFACE
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
