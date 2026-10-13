@@ -9,6 +9,6 @@
 
 void foundation_submodule(pybind11::module& module);
 
-PYBIND11_MODULE(pyariadne, module) {
+void foundation_module(pybind11::module& module) {
     foundation_submodule(module);
 }

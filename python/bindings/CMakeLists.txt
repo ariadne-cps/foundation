@@ -24,16 +24,7 @@ target_include_directories(pyariadne-foundation INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 )
 
-if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
-    add_library(pyariadne-foundation-module-obj OBJECT
-        foundation_module.cpp
-    )
-    target_include_directories(pyariadne-foundation-module-obj PRIVATE
-        "${PYTHON_COMMON_SOURCE_DIR}/include"
-    )
-    target_link_libraries(pyariadne-foundation-module-obj PRIVATE
-        pyariadne-python-common
-        pybind11::module
-    )
-    set_target_properties(pyariadne-foundation-module-obj PROPERTIES POSITION_INDEPENDENT_CODE ON)
-endif()
+ariadne_add_python_module(
+    NAME foundation
+    MODULE_SOURCE foundation_module.cpp
+)
