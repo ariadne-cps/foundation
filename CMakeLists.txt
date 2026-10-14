@@ -16,11 +16,13 @@ if(NOT TARGET ariadne-configuration)
     include("${CMAKE_CURRENT_SOURCE_DIR}/ss/configuration/cmake/ProjectOptions.cmake")
 endif()
 
-require_same_dependency_commit(Configuration
-    CHAINS
-        "configuration"
-        "utility|configuration"
-)
+if(EXISTS "${PROJECT_SOURCE_DIR}/.git")
+    require_same_dependency_commit(Configuration
+        CHAINS
+            "configuration"
+            "utility|configuration"
+    )
+endif()
 
 setup_project()
 
