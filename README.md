@@ -1,8 +1,8 @@
 
 # Ariadne Foundation
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![Unix Status](https://github.com/ariadne-cps/foundation/workflows/Unix/badge.svg)](https://github.com/ariadne-cps/foundation/actions/workflows/unix.yml)
-[![Windows Status](https://github.com/ariadne-cps/foundation/workflows/Windows/badge.svg)](https://github.com/ariadne-cps/foundation/actions/workflows/win.yml) [![Coverage Status](https://github.com/ariadne-cps/foundation/workflows/Coverage/badge.svg)](https://github.com/ariadne-cps/foundation/actions/workflows/coverage.yml) [![codecov](https://codecov.io/gh/ariadne-cps/foundation/branch/main/graph/badge.svg)](https://codecov.io/gh/ariadne-cps/foundation)
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![Unix Status](https://github.com/ariadne-cps/foundation/actions/workflows/unix.yml/badge.svg)](https://github.com/ariadne-cps/foundation/actions/workflows/unix.yml)
+[![Windows Status](https://github.com/ariadne-cps/foundation/actions/workflows/win.yml/badge.svg)](https://github.com/ariadne-cps/foundation/actions/workflows/win.yml) [![Sanitizers Status](https://github.com/ariadne-cps/foundation/actions/workflows/sanitizers.yml/badge.svg)](https://github.com/ariadne-cps/foundation/actions/workflows/sanitizers.yml) [![Coverage Status](https://github.com/ariadne-cps/foundation/actions/workflows/coverage.yml/badge.svg)](https://github.com/ariadne-cps/foundation/actions/workflows/coverage.yml) [![codecov](https://codecov.io/gh/ariadne-cps/foundation/branch/main/graph/badge.svg)](https://codecov.io/gh/ariadne-cps/foundation)
 
 Foundation provides the low-level computational paradigms and logical types used by Ariadne.
 
@@ -15,14 +15,32 @@ Clone the repository together with its Git submodules:
 ```bash
 git clone --recurse-submodules https://github.com/ariadne-cps/foundation.git
 cd foundation
-mkdir build
-cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
-cmake --build . --parallel
-ctest --output-on-failure
+cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release
+cmake --build build-release --parallel --target ariadne-foundation bindings
+cmake --install build-release --prefix install
 ```
 
-A C++20 compiler and CMake are required.
+A C++20 compiler, CMake and Python 3.11+ with development headers are required
+for building the optional Python bindings.
+
+## Tests
+
+Build and run the C++ and Python tests independently in Debug mode.
+Install `pytest` for the chosen Python interpreter first.
+
+```bash
+python -m pip install pytest
+cmake -S . -B build-debug -DCMAKE_BUILD_TYPE=Debug -DPYTHON_ENFORCE_TESTS=ON
+cmake --build build-debug --parallel --target tests
+ctest --test-dir build-debug -LE python --output-on-failure
+ctest --test-dir build-debug -L python --output-on-failure
+```
+
+## Sanitizers
+
+The Sanitizers workflow runs two independent Debug jobs on Ubuntu with Clang:
+ThreadSanitizer for data races, and AddressSanitizer + UndefinedBehaviorSanitizer
+for memory errors and undefined behavior. Python bindings are disabled in these jobs.
 
 ## Coverage
 
