@@ -56,6 +56,19 @@ class DelayedLogical final : public LogicalInterface {
     }
 };
 
+class TrackedLogical final : public LogicalInterface {
+    Int& _destructions;
+    LogicalValue _value;
+  public:
+    TrackedLogical(Int& destructions, LogicalValue value)
+        : _destructions(destructions), _value(value) { }
+    ~TrackedLogical() override { ++_destructions; }
+  private:
+    LogicalInterface* _copy() const override { return new TrackedLogical(*this); }
+    LogicalValue _check(Effort) const override { return _value; }
+    OutputStream& _write(OutputStream& os) const override { return os << "tracked"; }
+};
+
 } // namespace
 
 
@@ -70,6 +83,7 @@ class TestLogical
     Void test_effort();
     Void test_logical_values();
     Void test_handles();
+    Void test_owned_pointer_conversion();
     Void test_types();
     Void test_nondeterminism();
     Void test_class_names();
@@ -94,6 +108,7 @@ TestLogical::test()
     ARIADNE_TEST_CALL(test_effort());
     ARIADNE_TEST_CALL(test_logical_values());
     ARIADNE_TEST_CALL(test_handles());
+    ARIADNE_TEST_CALL(test_owned_pointer_conversion());
     ARIADNE_TEST_CALL(test_types());
     ARIADNE_TEST_CALL(test_nondeterminism());
     ARIADNE_TEST_CALL(test_class_names());
@@ -334,6 +349,32 @@ TestLogical::test_handles()
     ValidatedKleenean validated = Detail::logical_type_from_pointer<ValidatedTag>(validated_ptr);
     ARIADNE_TEST_EQUAL(probably(validated), true);
     delete validated_ptr;
+}
+
+Void
+TestLogical::test_owned_pointer_conversion()
+{
+    Effort effort(0u);
+    Int destructions=0;
+    {
+        Kleenean owned = Detail::logical_type_from_owned_pointer<EffectiveTag>(
+            new TrackedLogical(destructions, LogicalValue::TRUE));
+        ARIADNE_TEST_EQUAL(definitely(owned,effort),true);
+        ARIADNE_TEST_EQUAL(destructions,0);
+    }
+    ARIADNE_TEST_EQUAL(destructions,1);
+
+    // A value conversion releases a concrete logical object after extraction.
+    ValidatedKleenean value = Detail::logical_type_from_owned_pointer<ValidatedTag>(
+        Detail::new_logical_pointer_from_value(LogicalValue::LIKELY));
+    ARIADNE_TEST_EQUAL(probably(value),true);
+
+    // Failed conversions must also release the original allocation.
+    ARIADNE_TEST_THROWS(
+        Detail::logical_type_from_owned_pointer<ValidatedTag>(
+            new TrackedLogical(destructions,LogicalValue::TRUE)),
+        std::runtime_error);
+    ARIADNE_TEST_EQUAL(destructions,2);
 }
 
 Void

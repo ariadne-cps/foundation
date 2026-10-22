@@ -31,6 +31,7 @@
 #include "utility/stdlib.hpp"
 
 #include <limits>
+#include <memory>
 #include <stdexcept>
 #include "utility/typedefs.hpp"
 #include "utility/handle.hpp"
@@ -146,6 +147,19 @@ namespace Detail {
         static_assert (ConstructibleFrom<LogicalType<P>,LogicalValue>);
         return LogicalType<P>(logical_value_from_pointer(ptr));
     }
+
+    // Unlike the legacy conversion above, this API always takes ownership.
+    // Handle-based results retain the allocation; value-based results release
+    // it on both success and exception.
+    template<class P> LogicalType<P> logical_type_from_owned_pointer(LogicalInterface* ptr) {
+        std::unique_ptr<LogicalInterface> owner(ptr);
+        if constexpr (ConstructibleFrom<LogicalType<P>,LogicalHandle>) {
+            return LogicalType<P>(LogicalHandle(std::shared_ptr<const LogicalInterface>(std::move(owner))));
+        } else {
+            return LogicalType<P>(logical_value_from_pointer(owner.get()));
+        }
+    }
+
 
 
 }
