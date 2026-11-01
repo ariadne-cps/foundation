@@ -7,7 +7,7 @@
 
 #include "foundation/representation.hpp"
 #include "utility/string.hpp"
-#include "macro/testing.hpp"
+#include "ariadne-testing.hpp"
 
 using namespace Ariadne;
 
@@ -28,15 +28,17 @@ OutputStream& operator<<(OutputStream& os, PlainRepresentation const& object) {
 
 } // namespace
 
-class TestRepresentation
+class TestRepresentation : public Ariadne::Testing::ContextFixture
 {
   public:
+    using ContextFixture::ContextFixture;
     Void test();
 };
 
-Int main() {
-    ARIADNE_TEST_CLASS(TestRepresentation,TestRepresentation());
-    return ARIADNE_TEST_FAILURES;
+int main() {
+    ARIADNE_TESTING_SUITE("representation");
+    ARIADNE_TESTING_ADD_TEST(TestRepresentation, test);
+    return ARIADNE_TESTING_RUN_TESTS();
 }
 
 Void
@@ -44,11 +46,11 @@ TestRepresentation::test()
 {
     WithRepresentation with_repr { 4 };
     Representation<WithRepresentation> wrapped = representation(with_repr);
-    ARIADNE_TEST_EQUAL(wrapped.reference().value, 4);
-    ARIADNE_TEST_EQUAL(to_string(wrapped), String("repr(4)"));
+    ARIADNE_TESTING_EXPECT_EQUAL(wrapped.reference().value, 4);
+    ARIADNE_TESTING_EXPECT_EQUAL(to_string(wrapped), String("repr(4)"));
 
     PlainRepresentation plain { 9 };
     Representation<PlainRepresentation> plain_wrapped = representation(plain);
-    ARIADNE_TEST_EQUAL(plain_wrapped.reference().value, 9);
-    ARIADNE_TEST_EQUAL(to_string(plain_wrapped), String("plain(9)"));
+    ARIADNE_TESTING_EXPECT_EQUAL(plain_wrapped.reference().value, 9);
+    ARIADNE_TESTING_EXPECT_EQUAL(to_string(plain_wrapped), String("plain(9)"));
 }
