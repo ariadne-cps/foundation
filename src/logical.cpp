@@ -28,7 +28,7 @@
 
 #include "utility/stdlib.hpp"
 #include "utility/string.hpp"
-#include "macro/general.hpp"
+#include "utility/macros.hpp"
 #include "foundation/logical.hpp"
 
 namespace Ariadne {
