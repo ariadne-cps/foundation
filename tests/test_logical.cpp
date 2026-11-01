@@ -89,7 +89,7 @@ class TestLogical : public Ariadne::Testing::ContextFixture
 };
 
 
-int main() {
+int main(int argc, char** argv) {
     std::cout<<std::setprecision(20);
     std::cerr<<std::setprecision(20);
     ARIADNE_TESTING_SUITE("logical");
@@ -102,7 +102,7 @@ int main() {
     ARIADNE_TESTING_ADD_TEST(TestLogical, test_types);
     ARIADNE_TESTING_ADD_TEST(TestLogical, test_nondeterminism);
     ARIADNE_TESTING_ADD_TEST(TestLogical, test_class_names);
-    return ARIADNE_TESTING_RUN_TESTS();
+    return ARIADNE_TESTING_RUN_TESTS_WITH_ARGS(argc, argv);
 }
 
 

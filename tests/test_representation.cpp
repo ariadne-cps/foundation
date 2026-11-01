@@ -35,10 +35,10 @@ class TestRepresentation : public Ariadne::Testing::ContextFixture
     Void test();
 };
 
-int main() {
+int main(int argc, char** argv) {
     ARIADNE_TESTING_SUITE("representation");
     ARIADNE_TESTING_ADD_TEST(TestRepresentation, test);
-    return ARIADNE_TESTING_RUN_TESTS();
+    return ARIADNE_TESTING_RUN_TESTS_WITH_ARGS(argc, argv);
 }
 
 Void
