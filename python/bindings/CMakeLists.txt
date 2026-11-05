@@ -16,16 +16,16 @@ target_link_libraries(pyariadne-foundation-submodule-obj PRIVATE
 )
 set_target_properties(pyariadne-foundation-submodule-obj PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-add_library(pyariadne-foundation-interface INTERFACE)
-target_sources(pyariadne-foundation-interface INTERFACE
+add_library(pyariadne-foundation INTERFACE)
+target_sources(pyariadne-foundation INTERFACE
     $<TARGET_OBJECTS:pyariadne-foundation-submodule-obj>
 )
-target_include_directories(pyariadne-foundation-interface INTERFACE
+target_include_directories(pyariadne-foundation INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 )
 
 ariadne_add_python_module(
     NAME foundation
-    INTERFACE_TARGET pyariadne-foundation-interface
+    INTERFACE_TARGET pyariadne-foundation
     MODULE_SOURCE foundation_module.cpp
 )

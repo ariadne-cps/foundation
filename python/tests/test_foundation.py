@@ -1,4 +1,4 @@
-import pyariadne as foundation
+import pyariadne_foundation as foundation
 
 
 def test_boolean_bindings():
