@@ -8,9 +8,9 @@
 [![Coverage Status](https://github.com/ariadne-cps/foundation/actions/workflows/coverage.yml/badge.svg)](https://github.com/ariadne-cps/foundation/actions/workflows/coverage.yml)
 [![codecov](https://codecov.io/gh/ariadne-cps/foundation/branch/main/graph/badge.svg)](https://codecov.io/gh/ariadne-cps/foundation)
 
-Foundation provides the low-level computational paradigms and logical types used by Ariadne.
+Foundation provides the low-level computational paradigms and logical types used by Ariadne. Although independently maintained and usable, this repository is also part of the [Ariadne repository structure](https://github.com/ariadne-cps/ariadne/blob/main/doc/structure.md).
 
-Its only Ariadne dependency is [ariadne-cps/utility](https://github.com/ariadne-cps/utility). Build configuration is shared through [ariadne-cps/configuration](https://github.com/ariadne-cps/configuration).
+Its only Ariadne dependency is [ariadne-cps/utility](https://github.com/ariadne-cps/utility). Build configuration is shared through [ariadne-cps/build](https://github.com/ariadne-cps/build).
 
 ## Build
 
