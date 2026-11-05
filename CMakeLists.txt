@@ -49,6 +49,7 @@ endif()
 ariadne_register_public_headers(
     TARGET foundation
     DIRECTORIES "${PROJECT_SOURCE_DIR}/include/foundation"
+    FILES "${PROJECT_SOURCE_DIR}/include/ariadne-foundation.hpp"
 )
 
 setup_project_library(

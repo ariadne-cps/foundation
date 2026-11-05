@@ -34,11 +34,11 @@ if(PYTHON_TESTS)
             WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
         )
         set_property(TEST test_python_${TESTNAME} PROPERTY
-            ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:pyariadne>"
+            ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:pyariadne-foundation-module>"
         )
         set_property(TEST test_python_${TESTNAME} PROPERTY LABELS "python")
-        add_dependencies(test_python_${TESTNAME} pyariadne)
+        add_dependencies(test_python_${TESTNAME} pyariadne-foundation-module)
     endforeach()
 
-    add_dependencies(tests pyariadne)
+    add_dependencies(tests pyariadne-foundation-module)
 endif()
