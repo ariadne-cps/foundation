@@ -27,5 +27,6 @@ target_include_directories(pyariadne-foundation INTERFACE
 ariadne_add_python_module(
     NAME foundation
     INTERFACE_TARGET pyariadne-foundation
+    MODULE_IMPORT_NAME pyariadne_foundation
     MODULE_SOURCE foundation_module.cpp
 )
