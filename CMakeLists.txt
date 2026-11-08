@@ -58,7 +58,7 @@ setup_project_library(
     LINK_LIBRARIES foundation
 )
 
-setup_standalone_project_tests(
+setup_standalone_project(
     TARGET ariadne-foundation
     TEST_DIRECTORY tests
     TEST_TARGET tests
