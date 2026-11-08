@@ -25,24 +25,6 @@ if(EXISTS "${PROJECT_SOURCE_DIR}/.git")
         "utility|build"
         "testing|build"
         "utility|testing|build")
-    require_same_dependency_commit(Testing CHAINS
-        "testing"
-        "utility|testing")
-endif()
-
-
-setup_project()
-
-include_directories(${PROJECT_SOURCE_DIR}/include)
-
-add_subdirectory(ss)
-
-if(NOT TARGET foundation)
-    add_library(foundation INTERFACE)
-    target_include_directories(foundation INTERFACE
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include/ariadne-foundation>
-    )
     target_link_libraries(foundation INTERFACE utility)
 
     add_subdirectory(src)
