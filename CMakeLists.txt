@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(Foundation VERSION 1.0)
+project(Foundation VERSION 3.0)
 
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
 option(BUILD_PYTHON_BINDINGS "Build Python bindings" ON)
@@ -19,61 +19,7 @@ if(NOT TARGET ariadne-build)
     include("${CMAKE_CURRENT_SOURCE_DIR}/ss/bui/cmake/ProjectOptions.cmake")
 endif()
 
-if(EXISTS "${PROJECT_SOURCE_DIR}/.git")
-    require_same_dependency_commit(Build CHAINS
-        "build"
-        "utility|build"
-        "testing|build"
-        "utility|testing|build")
-endif()
+require_same_dependency_commit(Build CHAINS
+    "build" "utility|build" "testing|build")
 
-
-setup_project()
-
-include_directories(${PROJECT_SOURCE_DIR}/include)
-
-add_subdirectory(ss)
-
-if(NOT TARGET foundation)
-    add_library(foundation INTERFACE)
-    target_include_directories(foundation INTERFACE
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include/ariadne-foundation>
-    )
-    target_link_libraries(foundation INTERFACE utility)
-
-    add_subdirectory(src)
-    target_link_libraries(FOUNDATION_SRC PRIVATE foundation)
-endif()
-
-ariadne_register_public_headers(
-    TARGET foundation
-    DIRECTORIES "${PROJECT_SOURCE_DIR}/include/foundation"
-    FILES "${PROJECT_SOURCE_DIR}/include/ariadne-foundation.hpp"
-)
-
-setup_project_library(
-    TARGET ariadne-foundation
-    OBJECTS FOUNDATION_SRC
-    LINK_LIBRARIES foundation
-)
-
-setup_standalone_project(
-    TARGET ariadne-foundation
-    TEST_DIRECTORY tests
-    TEST_TARGET tests
-    SOURCES
-        "${PROJECT_SOURCE_DIR}/include"
-        "${PROJECT_SOURCE_DIR}/src"
-)
-
-if(BUILD_PYTHON_BINDINGS)
-    add_subdirectory(python)
-endif()
-
-if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
-    ariadne_install_dependency_bundle(
-        TARGET foundation
-        DESTINATION include/ariadne-foundation
-    )
-endif()
+ariadne_setup_module(foundation)
