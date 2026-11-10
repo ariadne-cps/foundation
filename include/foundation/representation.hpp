@@ -22,7 +22,6 @@
  *  along with Ariadne.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 #ifndef ARIADNE_FOUNDATION_REPRESENTATION_HPP
 #define ARIADNE_FOUNDATION_REPRESENTATION_HPP
 
@@ -30,21 +29,25 @@
 
 namespace Ariadne {
 
-template<class T> struct Representation {
-    T const* pointer;
-    explicit Representation(T const& value) : pointer(&value) { }
-    T const& reference() const { return *pointer; }
+template<class T>
+struct Representation {
+    const T* pointer;
+    explicit Representation(const T& value) : pointer(&value) {}
+    const T& reference() const { return *pointer; }
 };
 
-template<class T> inline Representation<T> representation(T const& value) {
+template<class T>
+inline Representation<T> representation(const T& value) {
     return Representation<T>(value);
 }
 
-template<class T> concept HasRepresentation = requires(OutputStream& os, T const& value) {
+template<class T>
+concept HasRepresentation = requires(OutputStream& os, const T& value) {
     value._repr(os);
 };
 
-template<class T> inline OutputStream& operator<<(OutputStream& os, Representation<T> const& object) {
+template<class T>
+inline OutputStream& operator<<(OutputStream& os, const Representation<T>& object) {
     if constexpr (HasRepresentation<T>) {
         object.reference()._repr(os);
         return os;

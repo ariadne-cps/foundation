@@ -26,16 +26,12 @@
  *  \brief
  */
 
-
-
 #ifndef ARIADNE_LOGICAL_DECL_HPP
 #define ARIADNE_LOGICAL_DECL_HPP
 
 #include "foundation/paradigm.hpp"
 
 namespace Ariadne {
-
-
 
 class Indeterminate;
 extern const Indeterminate indeterminate;
@@ -44,11 +40,16 @@ class Boolean;
 class Sierpinskian;
 class Kleenean;
 
-template<class L> class Negate;
-template<class L> class Lower;
-template<class L> class Upper;
-template<class L> class Validated;
-template<class L> class Approximate;
+template<class L>
+class Negate;
+template<class L>
+class Lower;
+template<class L>
+class Upper;
+template<class L>
+class Validated;
+template<class L>
+class Approximate;
 
 class NegatedSierpinskian;
 class LowerKleenean;
@@ -62,50 +63,102 @@ class ApproximateKleenean;
 
 using Fuzzy = ApproximateKleenean;
 
-template<class P> struct LogicalTypedef;
-template<class P> using LogicalType = typename LogicalTypedef<P>::Type;
-template<> struct LogicalTypedef<ExactTag> { typedef Boolean Type; };
-template<> struct LogicalTypedef<EffectiveTag> { typedef Kleenean Type; };
-template<> struct LogicalTypedef<ValidatedTag> { typedef ValidatedKleenean Type; };
-template<> struct LogicalTypedef<ApproximateTag> { typedef ApproximateKleenean Type; };
+template<class P>
+struct LogicalTypedef;
+template<class P>
+using LogicalType = typename LogicalTypedef<P>::Type;
+template<>
+struct LogicalTypedef<ExactTag> {
+    typedef Boolean Type;
+};
+template<>
+struct LogicalTypedef<EffectiveTag> {
+    typedef Kleenean Type;
+};
+template<>
+struct LogicalTypedef<ValidatedTag> {
+    typedef ValidatedKleenean Type;
+};
+template<>
+struct LogicalTypedef<ApproximateTag> {
+    typedef ApproximateKleenean Type;
+};
 
-template<class P> struct LowerLogicalTypedef;
-template<class P> using LowerLogicalType = typename LowerLogicalTypedef<P>::Type;
-template<> struct LowerLogicalTypedef<EffectiveTag> { typedef LowerKleenean Type; };
-template<> struct LowerLogicalTypedef<ValidatedTag> { typedef ValidatedLowerKleenean Type; };
-template<> struct LowerLogicalTypedef<ApproximateTag> { typedef ApproximateKleenean Type; };
+template<class P>
+struct LowerLogicalTypedef;
+template<class P>
+using LowerLogicalType = typename LowerLogicalTypedef<P>::Type;
+template<>
+struct LowerLogicalTypedef<EffectiveTag> {
+    typedef LowerKleenean Type;
+};
+template<>
+struct LowerLogicalTypedef<ValidatedTag> {
+    typedef ValidatedLowerKleenean Type;
+};
+template<>
+struct LowerLogicalTypedef<ApproximateTag> {
+    typedef ApproximateKleenean Type;
+};
 
-template<class P> struct UpperLogicalTypedef;
-template<class P> using UpperLogicalType = typename UpperLogicalTypedef<P>::Type;
-template<> struct UpperLogicalTypedef<EffectiveTag> { typedef UpperKleenean Type; };
-template<> struct UpperLogicalTypedef<ValidatedTag> { typedef ValidatedUpperKleenean Type; };
-template<> struct UpperLogicalTypedef<ApproximateTag> { typedef ApproximateKleenean Type; };
+template<class P>
+struct UpperLogicalTypedef;
+template<class P>
+using UpperLogicalType = typename UpperLogicalTypedef<P>::Type;
+template<>
+struct UpperLogicalTypedef<EffectiveTag> {
+    typedef UpperKleenean Type;
+};
+template<>
+struct UpperLogicalTypedef<ValidatedTag> {
+    typedef ValidatedUpperKleenean Type;
+};
+template<>
+struct UpperLogicalTypedef<ApproximateTag> {
+    typedef ApproximateKleenean Type;
+};
 
-template<class P> using KleeneanType = LogicalType<P>;
-template<class P> using LowerKleeneanType = LowerLogicalType<P>;
-template<class P> using UpperKleeneanType = UpperLogicalType<P>;
-
+template<class P>
+using KleeneanType = LogicalType<P>;
+template<class P>
+using LowerKleeneanType = LowerLogicalType<P>;
+template<class P>
+using UpperKleeneanType = UpperLogicalType<P>;
 
 using Decidable = Boolean;
 using Quasidecidable = Kleenean;
 using Verifyable = Sierpinskian;
 using Falsifyable = NegatedSierpinskian;
 
-Boolean operator!(Boolean const&);
-NegatedSierpinskian operator!(Sierpinskian const&);
-Kleenean operator!(Kleenean const&);
+Boolean operator!(const Boolean &);
+NegatedSierpinskian operator!(const Sierpinskian &);
+Kleenean operator!(const Kleenean &);
 
+template<class P>
+struct ApartnessTraits;
+template<class P>
+using ApartnessType = typename ApartnessTraits<P>::Type;
+template<>
+struct ApartnessTraits<ExactTag> {
+    typedef Boolean Type;
+};
+template<>
+struct ApartnessTraits<EffectiveTag> {
+    typedef Sierpinskian Type;
+};
+template<>
+struct ApartnessTraits<ValidatedTag> {
+    typedef ValidatedSierpinskian Type;
+};
+template<>
+struct ApartnessTraits<ApproximateTag> {
+    typedef ApproximateKleenean Type;
+};
 
-template<class P> struct ApartnessTraits;
-template<class P> using ApartnessType = typename ApartnessTraits<P>::Type;
-template<> struct ApartnessTraits<ExactTag> { typedef Boolean Type; };
-template<> struct ApartnessTraits<EffectiveTag> { typedef Sierpinskian Type; };
-template<> struct ApartnessTraits<ValidatedTag> { typedef ValidatedSierpinskian Type; };
-template<> struct ApartnessTraits<ApproximateTag> { typedef ApproximateKleenean Type; };
-
-template<class P> using EqualityLogicalType = decltype(not declval<ApartnessType<P>>());
-template<class P> using InequalityLogicalType = ApartnessType<P>;
-
+template<class P>
+using EqualityLogicalType = decltype(not declval<ApartnessType<P>>());
+template<class P>
+using InequalityLogicalType = ApartnessType<P>;
 
 namespace Detail {
 
@@ -113,6 +166,6 @@ enum class LogicalValue : ComparableEnumerationType;
 }
 using Detail::LogicalValue;
 
-}
+} // namespace Ariadne
 
 #endif

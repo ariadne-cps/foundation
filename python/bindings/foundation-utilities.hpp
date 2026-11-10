@@ -8,15 +8,15 @@
 #ifndef ARIADNE_PYTHON_FOUNDATION_UTILITIES_HPP
 #define ARIADNE_PYTHON_FOUNDATION_UTILITIES_HPP
 
+#include "foundation/representation.hpp"
 #include "utilities.hpp"
-
 #include "utility/string.hpp"
 #include "utility/typedefs.hpp"
-#include "foundation/representation.hpp"
 
 namespace Ariadne {
 
-template<class T> struct PythonClassName {
+template<class T>
+struct PythonClassName {
     static std::string get() { return class_name<T>(); }
 };
 
@@ -26,7 +26,7 @@ OutputStream& operator<<(OutputStream& os, const PythonRepresentation<T>& repr) 
 }
 
 template<class T>
-OutputStream& operator<=(OutputStream& os, T const& value) {
+OutputStream& operator<=(OutputStream& os, const T& value) {
     return os << python_representation(value);
 }
 
