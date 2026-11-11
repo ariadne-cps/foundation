@@ -64,21 +64,27 @@ class Effort {
     explicit Effort(Nat m) : _m(m) {}
     //! \brief Convert to a raw positive integer.
     operator Nat() const { return _m; }
+    /** @brief Return the work budget represented by this effort. */
     Nat work() const { return _m; }
+    /** @brief Increment the value or iterator. */
     Effort& operator++() {
         ++_m;
         return *this;
     }
+    /** @brief Add the operand in place. */
     Effort& operator+=(Nat m) {
         _m += m;
         return *this;
     }
+    /** @brief Multiply by the operand in place. */
     Effort& operator*=(Nat m) {
         _m *= m;
         return *this;
     }
+    /** @brief Write the value to the output stream. */
     friend OutputStream& operator<<(OutputStream& os, Effort eff) { return os << "Effort(" << eff._m << ")"; }
 };
+/** @brief Construct the typed value from the literal. */
 inline Effort operator""_eff(unsigned long long int e) {
     if (e > static_cast<unsigned long long int>(std::numeric_limits<Nat>::max())) {
         throw std::overflow_error("Effort literal out of range");
@@ -97,58 +103,98 @@ enum class LogicalValue : ComparableEnumerationType {
     LIKELY = +1,       //!< Considered likely to be true.
     TRUE = +2          //!< Definitely true.
 };
+/** @brief Construct the logical value with the supplied truth information. */
 inline LogicalValue make_logical_value(bool b) { return b ? LogicalValue::TRUE : LogicalValue::FALSE; }
+/** @brief Test whether truth has been established. */
 inline Bool definitely(LogicalValue lv) { return lv == LogicalValue::TRUE; }
+/** @brief Return the approximate truth decision. */
 inline Bool probably(const LogicalValue& lv) { return lv >= LogicalValue::LIKELY; }
+/** @brief Convert the logical predicate to a Boolean decision. */
 inline Bool decide(LogicalValue lv) { return lv >= LogicalValue::LIKELY; }
+/** @brief Test whether falsity has not been established. */
 inline Bool possibly(LogicalValue lv) { return lv != LogicalValue::FALSE; }
+/** @brief Test whether the logical value is definitely true or definitely false. */
 inline Bool is_determinate(LogicalValue lv) { return lv == LogicalValue::TRUE or lv == LogicalValue::FALSE; }
+/** @brief Test whether neither truth nor falsity has been established. */
 inline Bool is_indeterminate(LogicalValue lv) { return lv == LogicalValue::INDETERMINATE or lv == LogicalValue::UNLIKELY or lv == LogicalValue::LIKELY; }
+/** @brief Test equality of the operands. */
 LogicalValue operator==(LogicalValue lv1, LogicalValue lv2);
+/** @brief Return the logical negation. */
 inline LogicalValue operator!(LogicalValue lv) { return static_cast<LogicalValue>(-static_cast<ComparableEnumerationType>(lv)); }
+/** @brief Return the logical conjunction. */
 inline LogicalValue operator&&(LogicalValue lv1, LogicalValue lv2) { return std::min(lv1, lv2); }
+/** @brief Return the logical disjunction. */
 inline LogicalValue operator||(LogicalValue lv1, LogicalValue lv2) { return std::max(lv1, lv2); }
+/** @brief Return the exclusive disjunction. */
 inline LogicalValue operator^(LogicalValue lv1, LogicalValue lv2) { return not(lv1 == lv2); }
+/** @brief Write the value to the output stream. */
 OutputStream& operator<<(OutputStream& os, LogicalValue l);
 
+/** @brief Polymorphic interface for logical. */
 class LogicalInterface {
   public:
+    /** @brief Destroy the object and release its owned resources. */
     virtual ~LogicalInterface() = default;
+    /** @brief Return a copy of the object. */
     virtual LogicalInterface* _copy() const = 0;
+    /** @brief Check the predicate at the supplied effort or validate the supplied data. */
     virtual LogicalValue _check(Effort) const = 0;
+    /** @brief Write the value to the output stream. */
     virtual OutputStream& _write(OutputStream&) const = 0;
 };
 
+/** @brief Owning handle to a lazily checked logical predicate. */
 class LogicalHandle : public Handle<const LogicalInterface> {
   public:
     using Handle<const LogicalInterface>::Handle;
+    /** @brief Construct a constant with the supplied value. */
     static LogicalHandle constant(LogicalValue v);
+    /** @brief Check the predicate at the supplied effort or validate the supplied data. */
     LogicalValue check(Effort eff) const { return this->pointer()->_check(eff); }
+    /** @brief Write the value to the output stream. */
     friend OutputStream& operator<<(OutputStream& os, LogicalHandle l) {
         return l.pointer()->_write(os);
     }
 };
 
+/** @brief Check the predicate at the supplied effort or validate the supplied data. */
 inline LogicalValue check(LogicalHandle l, Effort e) { return l.check(e); }
+/** @brief Test whether truth has been established. */
 inline Bool definitely(LogicalHandle l, Effort e) { return definitely(check(l, e)); }
+/** @brief Return the approximate truth decision. */
 inline Bool probably(LogicalHandle l, Effort e) { return probably(check(l, e)); }
+/** @brief Convert the logical predicate to a Boolean decision. */
 inline Bool decide(LogicalHandle l, Effort e) { return decide(check(l, e)); }
+/** @brief Test whether falsity has not been established. */
 inline Bool possibly(LogicalHandle l, Effort e) { return possibly(check(l, e)); }
+/** @brief Return the logical conjunction. */
 LogicalHandle operator&&(LogicalHandle v1, LogicalHandle v2);
+/** @brief Return the logical disjunction. */
 LogicalHandle operator||(LogicalHandle v1, LogicalHandle v2);
+/** @brief Test equality of the operands. */
 LogicalHandle operator==(LogicalHandle v1, LogicalHandle v2);
+/** @brief Return the exclusive disjunction. */
 LogicalHandle operator^(LogicalHandle v1, LogicalHandle v2);
+/** @brief Return the logical negation. */
 LogicalHandle operator!(LogicalHandle v);
 
+/** @brief Return the logical conjunction. */
 LogicalHandle conjunction(LogicalHandle l1, LogicalHandle l2);
+/** @brief Return the logical disjunction. */
 LogicalHandle disjunction(LogicalHandle l1, LogicalHandle l2);
+/** @brief Return the logical negation. */
 LogicalHandle negation(LogicalHandle l);
+/** @brief Return logical equivalence. */
 LogicalHandle equality(LogicalHandle l1, LogicalHandle l2);
+/** @brief Return the exclusive disjunction. */
 LogicalHandle exclusive(LogicalHandle l1, LogicalHandle l2);
 
+/** @brief Obtain truth information from the logical interface pointer. */
 LogicalValue logical_value_from_pointer(LogicalInterface* ptr);
+/** @brief Allocate a logical interface representing the supplied truth information. */
 LogicalInterface* new_logical_pointer_from_value(LogicalValue);
 
+/** @brief Construct the logical type from a borrowed interface pointer. */
 template<class P>
 LogicalType<P> logical_type_from_pointer(LogicalInterface* ptr) {
     if constexpr (ConstructibleFrom<LogicalType<P>, LogicalHandle>) {
@@ -164,6 +210,7 @@ LogicalType<P> logical_type_from_pointer(LogicalInterface* ptr) {
 // Unlike the legacy conversion above, this API always takes ownership.
 // Handle-based results retain the allocation; value-based results release
 // it on both success and exception.
+/** @brief Construct the logical type taking ownership of the interface pointer. */
 template<class P>
 LogicalType<P> logical_type_from_owned_pointer(LogicalInterface* ptr) {
     std::unique_ptr<LogicalInterface> owner(ptr);
@@ -180,69 +227,102 @@ using Detail::LogicalHandle;
 using Detail::LogicalInterface;
 using Detail::LogicalValue;
 
+/** @brief Storage and conversion support shared by logical types. */
 template<class L, class R>
 class LogicalBase;
 
+/** @brief Storage and conversion support shared by logical types. */
 template<class L>
 class LogicalBase<L, LogicalValue> {
     typedef LogicalValue R;
 
   protected:
     R _v;
+    /** @brief Construct a \c LogicalBase from v. */
     explicit LogicalBase(R v) : _v(v) {}
+    /** @brief Disallow this construction to preserve the ownership contract. */
     explicit LogicalBase(bool b) = delete;
 
   public:
+    /** @brief Test whether truth has been established. */
     friend bool definitely(const L& l) { return Detail::definitely(l._v); }
+    /** @brief Return the approximate truth decision. */
     friend bool probably(const L& l) { return Detail::probably(l._v); }
+    /** @brief Convert the logical predicate to a Boolean decision. */
     friend bool decide(const L& l) { return Detail::decide(l._v); }
+    /** @brief Test whether falsity has not been established. */
     friend bool possibly(const L& l) { return Detail::possibly(l._v); }
+    /** @brief Test whether the logical value is definitely true or definitely false. */
     friend bool is_determinate(const L& l) { return Detail::is_determinate(l._v); }
+    /** @brief Test whether neither truth nor falsity has been established. */
     friend bool is_indeterminate(const L& l) { return Detail::is_indeterminate(l._v); }
 };
 
+/** @brief Storage and conversion support shared by logical types. */
 template<class L>
 class LogicalBase<L, LogicalHandle> {
     typedef LogicalHandle R;
 
   protected:
     R _v;
+    /** @brief Construct a \c LogicalBase from v. */
     explicit LogicalBase(R v) : _v(v) {}
+    /** @brief Disallow this construction to preserve the ownership contract. */
     explicit LogicalBase(bool b) = delete;
 
   public:
+    /** @brief Test whether truth has been established. */
     friend bool definitely(const L& l, Effort e) { return definitely(l.check(e)); }
+    /** @brief Return the approximate truth decision. */
     friend bool probably(const L& l, Effort e) { return probably(l.check(e)); }
+    /** @brief Convert the logical predicate to a Boolean decision. */
     friend bool decide(const L& l, Effort e) { return decide(l.check(e)); }
+    /** @brief Test whether falsity has not been established. */
     friend bool possibly(const L& l, Effort e) { return possibly(l.check(e)); }
+    /** @brief Test whether truth has been established. */
     friend bool definitely(const L& l) { return definitely(l, Effort::get_default()); }
+    /** @brief Return the approximate truth decision. */
     friend bool probably(const L& l) { return probably(l, Effort::get_default()); }
+    /** @brief Convert the logical predicate to a Boolean decision. */
     friend bool decide(const L& l) { return decide(l, Effort::get_default()); }
+    /** @brief Test whether falsity has not been established. */
     friend bool possibly(const L& l) { return possibly(l, Effort::get_default()); }
 };
 
+/** @brief Logical value with the selected information and computational paradigm. */
 template<class L, class R, class NL = L, class XL = L>
 class Logical : public LogicalBase<L, R> { // FIXME: Use protected inheritence
     template<class LL, class RR, class NNLL, class XXLL>
     friend class Logical;
 
   protected:
+    /** @brief Construct a \c Logical from v. */
     explicit Logical(R v) : LogicalBase<L, R>(v) {}
+    /** @brief Disallow this construction to preserve the ownership contract. */
     explicit Logical(bool b) = delete;
 
   public:
+    /** @brief Convert to const r &. */
     explicit operator const R&() const { return this->_v; }
+    /** @brief Write the representation of the object. */
     const R& repr() const { return this->_v; }
 
   public:
+    /** @brief Return the logical negation. */
     friend NL operator!(const L& l) { return NL(!l._v); }
+    /** @brief Return the logical conjunction. */
     friend L operator&&(const L& l1, const L& l2) { return L(l1._v && l2._v); }
+    /** @brief Return the logical disjunction. */
     friend L operator||(const L& l1, const L& l2) { return L(l1._v || l2._v); }
 
+    /** @brief Return the exclusive disjunction. */
     friend XL operator^(const L& l1, const L& l2) { return XL(l1._v ^ l2._v); }
+    /** @brief Test equality of the operands. */
     friend XL operator==(const L& l1, const L& l2) { return XL(l1._v == l2._v); }
+    /** @brief Test inequality of the operands. */
     friend XL operator!=(const L& l1, const L& l2) { return XL(l1._v ^ l2._v); }
 
+    /** @brief Write the value to the output stream. */
     friend OutputStream& operator<<(OutputStream& os, const L& l) { return os << l._v; }
 };
 
@@ -269,9 +349,13 @@ template<class L>
 bool decide(const L&);
 #endif
 
+/** @brief Test whether truth has been established. */
 inline bool definitely(bool b) { return b; }
+/** @brief Return the approximate truth decision. */
 inline bool probably(bool b) { return b; }
+/** @brief Convert the logical predicate to a Boolean decision. */
 inline bool decide(bool b) { return b; }
+/** @brief Test whether falsity has not been established. */
 inline bool possibly(bool b) { return b; }
 
 class Boolean;
@@ -286,12 +370,18 @@ class ValidatedLowerKleenean;
 class ValidatedUpperKleenean;
 class ApproximateKleenean;
 
+/** @brief Tag representing an undecided logical value. */
 class Indeterminate {
   public:
+    /** @brief Convert to validated sierpinskian. */
     operator ValidatedSierpinskian() const;
+    /** @brief Convert to validated kleenean. */
     operator ValidatedKleenean() const;
+    /** @brief Convert the logical predicate to a Boolean decision. */
     friend Bool decide(const Indeterminate& l, Effort e);
+    /** @brief Convert the logical predicate to a Boolean decision. */
     friend Bool decide(const Indeterminate& l);
+    /** @brief Write the value to the output stream. */
     friend OutputStream& operator<<(OutputStream& os, const ValidatedKleenean&);
 };
 
@@ -302,6 +392,7 @@ class Boolean : public Logical<Boolean, LogicalValue> {
     typedef Logical<Boolean, LogicalValue> Base;
 
   public:
+    /** @brief Construct a \c Boolean from l. */
     explicit Boolean(LogicalValue l) : Base(l) {}
 
   public:
@@ -322,9 +413,13 @@ class Boolean : public Logical<Boolean, LogicalValue> {
     //! \brief Logical equality.
     friend Boolean operator==(const Boolean& b1, const Boolean& b2);
 
+    /** @brief Return the logical conjunction. */
     friend Boolean operator&&(const Boolean& l1, const Bool& l2) { return l1 && Boolean(l2); }
+    /** @brief Return the logical conjunction. */
     friend Boolean operator&&(const Bool& l1, const Boolean& l2) { return Boolean(l1) && l2; }
+    /** @brief Return the logical disjunction. */
     friend Boolean operator||(const Boolean& l1, const Bool& l2) { return l1 || Boolean(l2); }
+    /** @brief Return the logical disjunction. */
     friend Boolean operator||(const Bool& l1, const Boolean& l2) { return Boolean(l1) || l2; }
 };
 
@@ -336,9 +431,13 @@ class Sierpinskian : public Logical<Sierpinskian, LogicalHandle, NegatedSierpins
     typedef Logical<Sierpinskian, LogicalHandle, NegatedSierpinskian, Kleenean> Base;
 
   public:
+    /** @brief Construct a \c Sierpinskian from l. */
     explicit Sierpinskian(LogicalValue l) : Base(LogicalHandle::constant(l)) {}
+    /** @brief Construct a \c Sierpinskian from l. */
     explicit Sierpinskian(LogicalHandle l) : Base(l) {}
+    /** @brief Construct a \c Sierpinskian from b. */
     explicit Sierpinskian(bool b = true) : Sierpinskian(Detail::make_logical_value(b)) {}
+    /** @brief Construct a \c Sierpinskian with the specified characteristics. */
     Sierpinskian(Indeterminate) : Sierpinskian(LogicalValue::INDETERMINATE) {}
     //! \brief Check the value using effort \a e.
     ValidatedSierpinskian check(Effort e) const;
@@ -352,10 +451,14 @@ class Sierpinskian : public Logical<Sierpinskian, LogicalHandle, NegatedSierpins
     //! \brief Logical disjunction.
     friend Sierpinskian operator||(const Sierpinskian& l1, const Sierpinskian& l2);
 
+    /** @brief Return the logical disjunction. */
     friend const Sierpinskian& operator||(const Sierpinskian& l1, const Boolean&) { return l1; }
+    /** @brief Return the logical disjunction. */
     friend const Sierpinskian& operator||(const Boolean&, const Sierpinskian& l2) { return l2; }
 
+    /** @brief Return the logical conjunction. */
     friend Kleenean operator&&(const Kleenean&, const Kleenean&);
+    /** @brief Return the logical disjunction. */
     friend Kleenean operator||(const Kleenean&, const Kleenean&);
 };
 
@@ -367,9 +470,13 @@ class NegatedSierpinskian : public Logical<NegatedSierpinskian, LogicalHandle, S
     typedef Logical<NegatedSierpinskian, LogicalHandle, Sierpinskian, Kleenean> Base;
 
   public:
+    /** @brief Construct a \c NegatedSierpinskian from l. */
     explicit NegatedSierpinskian(LogicalValue l) : Base(LogicalHandle::constant(l)) {}
+    /** @brief Construct a \c NegatedSierpinskian from l. */
     explicit NegatedSierpinskian(LogicalHandle l) : Base(l) {}
+    /** @brief Construct a \c NegatedSierpinskian from b. */
     explicit NegatedSierpinskian(bool b) : NegatedSierpinskian(Detail::make_logical_value(b)) {}
+    /** @brief Construct a \c NegatedSierpinskian with the specified characteristics. */
     NegatedSierpinskian(Indeterminate) : NegatedSierpinskian(LogicalValue::INDETERMINATE) {}
     //! \brief Check the value using effort \a e.
     ValidatedNegatedSierpinskian check(Effort e) const;
@@ -383,9 +490,13 @@ class NegatedSierpinskian : public Logical<NegatedSierpinskian, LogicalHandle, S
     //! \brief Logical disjunction.
     friend NegatedSierpinskian operator||(const NegatedSierpinskian& l1, const NegatedSierpinskian& l2);
 
+    /** @brief Return the logical conjunction. */
     friend const NegatedSierpinskian& operator&&(const NegatedSierpinskian& l1, const Boolean&) { return l1; }
+    /** @brief Return the logical conjunction. */
     friend const NegatedSierpinskian& operator&&(const Boolean&, const NegatedSierpinskian& l2) { return l2; }
+    /** @brief Return the logical conjunction. */
     friend Kleenean operator&&(const Kleenean&, const Kleenean&);
+    /** @brief Return the logical disjunction. */
     friend Kleenean operator||(const Kleenean&, const Kleenean&);
 };
 
@@ -398,7 +509,9 @@ class Kleenean : public Logical<Kleenean, LogicalHandle> {
     typedef Logical<Kleenean, LogicalHandle> Base;
 
   public:
+    /** @brief Construct a \c Kleenean from l. */
     explicit Kleenean(const LogicalHandle& l) : Base(l) {}
+    /** @brief Construct a \c Kleenean from l. */
     explicit Kleenean(LogicalValue l) : Base(LogicalHandle::constant(l)) {} // FIXME: Remove
 
   public:
@@ -437,10 +550,15 @@ class LowerKleenean : public Logical<LowerKleenean, LogicalHandle, UpperKleenean
     typedef Logical<LowerKleenean, LogicalHandle, UpperKleenean> Base;
 
   public:
+    /** @brief Construct a \c LowerKleenean from l. */
     explicit LowerKleenean(const LogicalHandle& l) : Base(l) {}
+    /** @brief Construct a \c LowerKleenean from b. */
     LowerKleenean(bool b) : LowerKleenean(Boolean(b)) {}
+    /** @brief Construct a \c LowerKleenean with the specified characteristics. */
     LowerKleenean(Indeterminate) : LowerKleenean(LogicalHandle::constant(LogicalValue::INDETERMINATE)) {}
+    /** @brief Construct a \c LowerKleenean from b. */
     LowerKleenean(Boolean b) : LowerKleenean(Kleenean(b)) {}
+    /** @brief Construct a \c LowerKleenean from s. */
     LowerKleenean(Sierpinskian s) : LowerKleenean(Kleenean(s)) {}
     //! \brief Convert from a %Kleenean predicate.
     LowerKleenean(Kleenean k) : LowerKleenean(k.repr()) {}
@@ -464,10 +582,15 @@ class UpperKleenean : public Logical<UpperKleenean, LogicalHandle, LowerKleenean
     typedef Logical<UpperKleenean, LogicalHandle, LowerKleenean> Base;
 
   public:
+    /** @brief Construct a \c UpperKleenean from l. */
     explicit UpperKleenean(const LogicalHandle& l) : Base(l) {}
+    /** @brief Construct a \c UpperKleenean from b. */
     UpperKleenean(bool b) : UpperKleenean(Kleenean(b)) {}
+    /** @brief Construct a \c UpperKleenean with the specified characteristics. */
     UpperKleenean(Indeterminate) : UpperKleenean(LogicalHandle::constant(LogicalValue::INDETERMINATE)) {}
+    /** @brief Construct a \c UpperKleenean from b. */
     UpperKleenean(Boolean b) : UpperKleenean(Kleenean(b)) {}
+    /** @brief Construct a \c UpperKleenean from ns. */
     UpperKleenean(NegatedSierpinskian ns) : UpperKleenean(Kleenean(ns)) {}
     //! \brief Convert from a %Kleenean predicate.
     UpperKleenean(Kleenean k) : UpperKleenean(k.repr()) {}
@@ -494,11 +617,17 @@ class NaiveKleenean : public Logical<NaiveKleenean, LogicalHandle> {
     typedef Logical<NaiveKleenean, LogicalHandle> Base;
 
   public:
+    /** @brief Construct a \c NaiveKleenean from l. */
     explicit NaiveKleenean(const LogicalHandle& l) : Base(l) {}
+    /** @brief Construct a \c NaiveKleenean from b. */
     NaiveKleenean(bool b) : NaiveKleenean(Kleenean(b)) {}
+    /** @brief Construct a \c NaiveKleenean from i. */
     NaiveKleenean(Indeterminate i) : NaiveKleenean(Kleenean(i)) {}
+    /** @brief Construct a \c NaiveKleenean from b. */
     NaiveKleenean(Boolean b) : NaiveKleenean(Kleenean(b)) {}
+    /** @brief Construct a \c NaiveKleenean from s. */
     NaiveKleenean(Sierpinskian s) : NaiveKleenean(Kleenean(s)) {}
+    /** @brief Construct a \c NaiveKleenean from ns. */
     NaiveKleenean(NegatedSierpinskian ns) : NaiveKleenean(Kleenean(ns)) {}
     //! \brief Convert from a %Kleenean predicate.
     NaiveKleenean(Kleenean k) : NaiveKleenean(k.repr()) {}
@@ -526,9 +655,13 @@ class ValidatedSierpinskian : public Logical<ValidatedSierpinskian, LogicalValue
     typedef Logical<ValidatedSierpinskian, LogicalValue, ValidatedNegatedSierpinskian> Base;
 
   public:
+    /** @brief Construct a \c ValidatedSierpinskian from lv. */
     explicit ValidatedSierpinskian(LogicalValue lv) : Base(lv || LogicalValue::UNLIKELY) {}
+    /** @brief Construct a \c ValidatedSierpinskian from b. */
     ValidatedSierpinskian(bool b) : ValidatedSierpinskian(b ? LogicalValue::TRUE : LogicalValue::UNLIKELY) {}
+    /** @brief Construct a \c ValidatedSierpinskian from s, e. */
     ValidatedSierpinskian(Sierpinskian s, Effort e) : ValidatedSierpinskian(s.check(e)) {}
+    /** @brief Check the predicate at the supplied effort or validate the supplied data. */
     friend ValidatedSierpinskian check(const Sierpinskian& s, Effort e) { return s.check(e); }
 };
 
@@ -539,9 +672,13 @@ class ValidatedNegatedSierpinskian : public Logical<ValidatedNegatedSierpinskian
     typedef Logical<ValidatedNegatedSierpinskian, LogicalValue, ValidatedSierpinskian> Base;
 
   public:
+    /** @brief Construct a \c ValidatedNegatedSierpinskian from lv. */
     explicit ValidatedNegatedSierpinskian(LogicalValue lv) : Base(lv && LogicalValue::LIKELY) {}
+    /** @brief Construct a \c ValidatedNegatedSierpinskian from b. */
     ValidatedNegatedSierpinskian(bool b) : ValidatedNegatedSierpinskian(b ? LogicalValue::LIKELY : LogicalValue::FALSE) {}
+    /** @brief Construct a \c ValidatedNegatedSierpinskian from ns, e. */
     ValidatedNegatedSierpinskian(NegatedSierpinskian ns, Effort e) : ValidatedNegatedSierpinskian(ns.check(e)) {}
+    /** @brief Check the predicate at the supplied effort or validate the supplied data. */
     friend ValidatedNegatedSierpinskian check(const NegatedSierpinskian& ns, Effort e) { return ns.check(e); }
 };
 
@@ -553,13 +690,21 @@ class ValidatedKleenean : public Logical<ValidatedKleenean, LogicalValue> {
     typedef Logical<ValidatedKleenean, LogicalValue> Base;
 
   public:
+    /** @brief Construct a \c ValidatedKleenean with the specified characteristics. */
     explicit ValidatedKleenean() : ValidatedKleenean(true) {} // FIXME: Remove
+    /** @brief Construct a \c ValidatedKleenean from lv. */
     explicit ValidatedKleenean(LogicalValue lv) : Base(lv) {}
+    /** @brief Construct a \c ValidatedKleenean from b. */
     ValidatedKleenean(bool b) : ValidatedKleenean(Boolean(b)) {}
+    /** @brief Construct a \c ValidatedKleenean from b. */
     ValidatedKleenean(Boolean b) : ValidatedKleenean(static_cast<LogicalValue>(b)) {}
+    /** @brief Construct a \c ValidatedKleenean from s. */
     explicit ValidatedKleenean(ValidatedSierpinskian s) : ValidatedKleenean(static_cast<LogicalValue>(s)) {}
+    /** @brief Construct a \c ValidatedKleenean from ns. */
     explicit ValidatedKleenean(ValidatedNegatedSierpinskian ns) : ValidatedKleenean(static_cast<LogicalValue>(ns)) {}
+    /** @brief Construct a \c ValidatedKleenean from k, e. */
     ValidatedKleenean(Kleenean k, Effort e) : ValidatedKleenean(k.check(e)) {}
+    /** @brief Check the predicate at the supplied effort or validate the supplied data. */
     friend ValidatedKleenean check(const Kleenean& k, Effort e) { return k.check(e); }
 };
 
@@ -570,12 +715,19 @@ class ValidatedLowerKleenean : public Logical<ValidatedLowerKleenean, LogicalVal
     typedef Logical<ValidatedLowerKleenean, LogicalValue, ValidatedUpperKleenean> Base;
 
   public:
+    /** @brief Construct a \c ValidatedLowerKleenean from lv. */
     explicit ValidatedLowerKleenean(LogicalValue lv) : Base(lv || LogicalValue::UNLIKELY) {}
+    /** @brief Construct a \c ValidatedLowerKleenean from b. */
     ValidatedLowerKleenean(bool b) : ValidatedLowerKleenean(Boolean(b)) {}
+    /** @brief Construct a \c ValidatedLowerKleenean from b. */
     ValidatedLowerKleenean(Boolean b) : ValidatedLowerKleenean(static_cast<LogicalValue>(b)) {}
+    /** @brief Construct a \c ValidatedLowerKleenean from s. */
     ValidatedLowerKleenean(ValidatedSierpinskian s) : ValidatedLowerKleenean(static_cast<LogicalValue>(s)) {}
+    /** @brief Construct a \c ValidatedLowerKleenean from k. */
     ValidatedLowerKleenean(ValidatedKleenean k) : ValidatedLowerKleenean(static_cast<LogicalValue>(k)) {}
+    /** @brief Construct a \c ValidatedLowerKleenean from lk, e. */
     ValidatedLowerKleenean(LowerKleenean lk, Effort e) : ValidatedLowerKleenean(lk.check(e)) {}
+    /** @brief Check the predicate at the supplied effort or validate the supplied data. */
     friend ValidatedLowerKleenean check(const LowerKleenean& lk, Effort e) { return lk.check(e); }
 };
 
@@ -586,12 +738,19 @@ class ValidatedUpperKleenean : public Logical<ValidatedUpperKleenean, LogicalVal
     typedef Logical<ValidatedUpperKleenean, LogicalValue, ValidatedLowerKleenean> Base;
 
   public:
+    /** @brief Construct a \c ValidatedUpperKleenean from lv. */
     explicit ValidatedUpperKleenean(LogicalValue lv) : Base(lv && LogicalValue::LIKELY) {}
+    /** @brief Construct a \c ValidatedUpperKleenean from b. */
     ValidatedUpperKleenean(bool b) : ValidatedUpperKleenean(Boolean(b)) {}
+    /** @brief Construct a \c ValidatedUpperKleenean from b. */
     ValidatedUpperKleenean(Boolean b) : ValidatedUpperKleenean(static_cast<LogicalValue>(b)) {}
+    /** @brief Construct a \c ValidatedUpperKleenean from k. */
     ValidatedUpperKleenean(ValidatedKleenean k) : ValidatedUpperKleenean(static_cast<LogicalValue>(k)) {}
+    /** @brief Construct a \c ValidatedUpperKleenean from ns. */
     ValidatedUpperKleenean(ValidatedNegatedSierpinskian ns) : ValidatedUpperKleenean(static_cast<LogicalValue>(ns)) {}
+    /** @brief Construct a \c ValidatedUpperKleenean from uk, e. */
     ValidatedUpperKleenean(UpperKleenean uk, Effort e) : ValidatedUpperKleenean(uk.check(e)) {}
+    /** @brief Check the predicate at the supplied effort or validate the supplied data. */
     friend ValidatedUpperKleenean check(const UpperKleenean& uk, Effort e) { return uk.check(e); }
 };
 
@@ -604,12 +763,19 @@ class ApproximateKleenean : public Logical<ApproximateKleenean, LogicalValue> {
     typedef Logical<ApproximateKleenean, LogicalValue> Base;
 
   public:
+    /** @brief Construct a \c ApproximateKleenean from lv. */
     explicit ApproximateKleenean(LogicalValue lv) : Base((lv && LogicalValue::LIKELY) || LogicalValue::UNLIKELY) {}
+    /** @brief Construct a \c ApproximateKleenean from b. */
     ApproximateKleenean(bool b) : ApproximateKleenean(Boolean(b)) {}
+    /** @brief Construct a \c ApproximateKleenean from b. */
     ApproximateKleenean(Boolean b) : ApproximateKleenean(static_cast<LogicalValue>(b)) {}
+    /** @brief Construct a \c ApproximateKleenean from k. */
     ApproximateKleenean(ValidatedKleenean k) : ApproximateKleenean(static_cast<LogicalValue>(k)) {}
+    /** @brief Construct a \c ApproximateKleenean from lk. */
     ApproximateKleenean(ValidatedLowerKleenean lk) : ApproximateKleenean(static_cast<LogicalValue>(lk)) {}
+    /** @brief Construct a \c ApproximateKleenean from uk. */
     ApproximateKleenean(ValidatedUpperKleenean uk) : ApproximateKleenean(static_cast<LogicalValue>(uk)) {}
+    /** @brief Construct a \c ApproximateKleenean from k, e. */
     ApproximateKleenean(Kleenean k, Effort e) : ApproximateKleenean(k.check(e)) {}
 };
 
@@ -619,9 +785,11 @@ inline Indeterminate::operator ValidatedSierpinskian() const {
 inline Indeterminate::operator ValidatedKleenean() const {
     return ValidatedKleenean(LogicalValue::INDETERMINATE);
 }
+/** @brief Convert the logical predicate to a Boolean decision. */
 inline Bool decide(const Indeterminate&, Effort) {
     return decide(ValidatedKleenean(LogicalValue::INDETERMINATE));
 }
+/** @brief Convert the logical predicate to a Boolean decision. */
 inline Bool decide(const Indeterminate&) {
     return decide(ValidatedKleenean(LogicalValue::INDETERMINATE));
 }
@@ -645,18 +813,23 @@ inline ApproximateKleenean NaiveKleenean::check(Effort e) const {
     return ApproximateKleenean(this->repr().check(e));
 }
 
+/** @brief Boolean decision selected from partially decidable alternatives. */
 class NondeterministicBoolean {
     LowerKleenean _pt;
     LowerKleenean _pf;
     Bool _r;
 
   public:
+    /** @brief Construct a \c NondeterministicBoolean from pt, pf. */
     NondeterministicBoolean(LowerKleenean pt, LowerKleenean pf) : _pt(pt), _pf(pf), _r(_choose(pt, pf)) {}
+    /** @brief Convert to bool. */
     operator bool() const { return _r; }
 
   private:
+    /** @brief Choose an alternative whose predicate can be established. */
     static Bool _choose(LowerKleenean pt, LowerKleenean pf);
 };
+/** @brief Choose an alternative whose predicate can be established. */
 inline NondeterministicBoolean choose(LowerKleenean pt, LowerKleenean pf) {
     return NondeterministicBoolean(pt, pf);
 }
@@ -666,14 +839,18 @@ inline NondeterministicBoolean choose(LowerKleenean pt, LowerKleenean pf) {
 //! Loops infinitely if no \c p[i] can be shown to be definitely \c true.
 SizeType nondeterministic_choose_index(const Array<LowerKleenean>& p);
 
+/** @brief Conditional alternative pairing a logical predicate with a term. */
 template<class P, class T>
 class Case {
     P _p;
     T _t;
 
   public:
+    /** @brief Construct a \c Case from p, t. */
     Case(P p, T t) : _p(p), _t(t) {}
+    /** @brief Return the branch predicate. */
     P condition() const { return _p; }
+    /** @brief Return the branch value. */
     T term() const { return _t; }
 };
 

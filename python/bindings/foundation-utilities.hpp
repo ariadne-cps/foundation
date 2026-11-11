@@ -36,21 +36,26 @@
 
 namespace Ariadne {
 
+/** @brief Compile-time Python class-name customization. */
 template<class T>
 struct PythonClassName {
+    /** @brief Return the requested element or stored value. */
     static std::string get() { return class_name<T>(); }
 };
 
+/** @brief Write the value to the output stream. */
 template<class T>
 OutputStream& operator<<(OutputStream& os, const PythonRepresentation<T>& repr) {
     return os << python_class_name<T>() << "(" << repr.reference() << ")";
 }
 
+/** @brief Test whether the first operand is less than or equal to the second. */
 template<class T>
 OutputStream& operator<=(OutputStream& os, const T& value) {
     return os << python_representation(value);
 }
 
+/** @brief Return the C++ representation used by the Python binding. */
 template<class T>
 std::string __crepr__(const T& value) {
     std::stringstream ss;

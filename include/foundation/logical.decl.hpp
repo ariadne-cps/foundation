@@ -40,14 +40,19 @@ class Boolean;
 class Sierpinskian;
 class Kleenean;
 
+/** @brief Type transformation selecting the negated logical type. */
 template<class L>
 class Negate;
+/** @brief Type transformation selecting the lower-information type. */
 template<class L>
 class Lower;
+/** @brief Type transformation selecting the upper-information type. */
 template<class L>
 class Upper;
+/** @brief Type transformation selecting the validated-information type. */
 template<class L>
 class Validated;
+/** @brief Type transformation selecting the approximate-information type. */
 template<class L>
 class Approximate;
 
@@ -63,56 +68,69 @@ class ApproximateKleenean;
 
 using Fuzzy = ApproximateKleenean;
 
+/** @brief Associated type definitions for logical. */
 template<class P>
 struct LogicalTypedef;
 template<class P>
 using LogicalType = typename LogicalTypedef<P>::Type;
+/** @brief Associated type definitions for logical. */
 template<>
 struct LogicalTypedef<ExactTag> {
     typedef Boolean Type;
 };
+/** @brief Associated type definitions for logical. */
 template<>
 struct LogicalTypedef<EffectiveTag> {
     typedef Kleenean Type;
 };
+/** @brief Associated type definitions for logical. */
 template<>
 struct LogicalTypedef<ValidatedTag> {
     typedef ValidatedKleenean Type;
 };
+/** @brief Associated type definitions for logical. */
 template<>
 struct LogicalTypedef<ApproximateTag> {
     typedef ApproximateKleenean Type;
 };
 
+/** @brief Associated type definitions for lower logical. */
 template<class P>
 struct LowerLogicalTypedef;
 template<class P>
 using LowerLogicalType = typename LowerLogicalTypedef<P>::Type;
+/** @brief Associated type definitions for lower logical. */
 template<>
 struct LowerLogicalTypedef<EffectiveTag> {
     typedef LowerKleenean Type;
 };
+/** @brief Associated type definitions for lower logical. */
 template<>
 struct LowerLogicalTypedef<ValidatedTag> {
     typedef ValidatedLowerKleenean Type;
 };
+/** @brief Associated type definitions for lower logical. */
 template<>
 struct LowerLogicalTypedef<ApproximateTag> {
     typedef ApproximateKleenean Type;
 };
 
+/** @brief Associated type definitions for upper logical. */
 template<class P>
 struct UpperLogicalTypedef;
 template<class P>
 using UpperLogicalType = typename UpperLogicalTypedef<P>::Type;
+/** @brief Associated type definitions for upper logical. */
 template<>
 struct UpperLogicalTypedef<EffectiveTag> {
     typedef UpperKleenean Type;
 };
+/** @brief Associated type definitions for upper logical. */
 template<>
 struct UpperLogicalTypedef<ValidatedTag> {
     typedef ValidatedUpperKleenean Type;
 };
+/** @brief Associated type definitions for upper logical. */
 template<>
 struct UpperLogicalTypedef<ApproximateTag> {
     typedef ApproximateKleenean Type;
@@ -130,26 +148,34 @@ using Quasidecidable = Kleenean;
 using Verifyable = Sierpinskian;
 using Falsifyable = NegatedSierpinskian;
 
+/** @brief Return the logical negation. */
 Boolean operator!(const Boolean &);
+/** @brief Return the logical negation. */
 NegatedSierpinskian operator!(const Sierpinskian &);
+/** @brief Return the logical negation. */
 Kleenean operator!(const Kleenean &);
 
+/** @brief Compile-time traits for apartness. */
 template<class P>
 struct ApartnessTraits;
 template<class P>
 using ApartnessType = typename ApartnessTraits<P>::Type;
+/** @brief Compile-time traits for apartness. */
 template<>
 struct ApartnessTraits<ExactTag> {
     typedef Boolean Type;
 };
+/** @brief Compile-time traits for apartness. */
 template<>
 struct ApartnessTraits<EffectiveTag> {
     typedef Sierpinskian Type;
 };
+/** @brief Compile-time traits for apartness. */
 template<>
 struct ApartnessTraits<ValidatedTag> {
     typedef ValidatedSierpinskian Type;
 };
+/** @brief Compile-time traits for apartness. */
 template<>
 struct ApartnessTraits<ApproximateTag> {
     typedef ApproximateKleenean Type;

@@ -36,6 +36,7 @@
 
 namespace Ariadne {
 
+/** @brief Exception reporting paradigm. */
 class ParadigmError {};
 
 typedef std::uint16_t ParadigmCodeType;
@@ -70,18 +71,21 @@ struct RawTag {};
 //! \ingroup ParadigmSubModule
 //! \brief A tag meaning that the object provides an approximation to a quantity with no guarantees on the error.
 struct ApproximateTag {
+    /** @brief Return the operation or variant discriminator. */
     static constexpr ParadigmCode code() { return ParadigmCode::APPROXIMATE; }
 };
 
 //! \ingroup ParadigmSubModule
 //! \brief A tag meaning that the object represents an approximation to a quantity with a bound on the error in some metric, or lower and upper bounds on a quantity.
 struct ValidatedTag : public ApproximateTag {
+    /** @brief Return the operation or variant discriminator. */
     static constexpr ParadigmCode code() { return ParadigmCode::VALIDATED; }
 };
 
 //! \ingroup ParadigmSubModule
 //! \brief A tag meaning that the object represents a quantity exactly, but equality is undecidable.
 struct EffectiveTag : public ValidatedTag {
+    /** @brief Return the operation or variant discriminator. */
     static constexpr ParadigmCode code() { return ParadigmCode::EFFECTIVE; }
 };
 
@@ -89,32 +93,53 @@ struct EffectiveTag : public ValidatedTag {
 //! \brief A tag meaning that the object represents a quantity exactly, and equality is decidable.
 //! Only available for discrete types i.e. elements of countable spaces, or for computational types such as floating-point numbers.
 struct ExactTag : public EffectiveTag {
+    /** @brief Return the operation or variant discriminator. */
     static constexpr ParadigmCode code() { return ParadigmCode::EXACT; }
 };
 
+/** @brief Tag selecting metric. */
 struct MetricTag {
+    /** @brief Construct a \c MetricTag with the specified characteristics. */
     MetricTag() {};
+    /** @brief Construct a \c MetricTag with the specified characteristics. */
     MetricTag(ValidatedTag) {};
+    /** @brief Return the operation or variant discriminator. */
     static constexpr ParadigmCode code() { return ParadigmCode(7); }
 };
+/** @brief Tag selecting order. */
 struct OrderTag {
+    /** @brief Construct a \c OrderTag with the specified characteristics. */
     OrderTag() {};
+    /** @brief Construct a \c OrderTag with the specified characteristics. */
     OrderTag(ValidatedTag) {};
+    /** @brief Return the operation or variant discriminator. */
     static constexpr ParadigmCode code() { return ParadigmCode(3); }
 };
+/** @brief Tag selecting upper. */
 struct UpperTag {
+    /** @brief Construct a \c UpperTag with the specified characteristics. */
     UpperTag() {};
+    /** @brief Construct a \c UpperTag with the specified characteristics. */
     UpperTag(ValidatedTag) {};
+    /** @brief Return the operation or variant discriminator. */
     static constexpr ParadigmCode code() { return ParadigmCode(2); }
 };
+/** @brief Tag selecting lower. */
 struct LowerTag {
+    /** @brief Construct a \c LowerTag with the specified characteristics. */
     LowerTag() {};
+    /** @brief Construct a \c LowerTag with the specified characteristics. */
     LowerTag(ValidatedTag) {};
+    /** @brief Return the operation or variant discriminator. */
     static constexpr ParadigmCode code() { return ParadigmCode(1); }
 };
+/** @brief Tag selecting approximation. */
 struct ApproximationTag {
+    /** @brief Construct a \c ApproximationTag with the specified characteristics. */
     ApproximationTag() {};
+    /** @brief Construct a \c ApproximationTag with the specified characteristics. */
     ApproximationTag(ValidatedTag) {};
+    /** @brief Return the operation or variant discriminator. */
     static constexpr ParadigmCode code() { return ParadigmCode(0); }
 };
 using BoundedTag = OrderTag;
@@ -126,9 +151,11 @@ using EqualityInformation = P;
 template<class P>
 using LessThanInformation = P;
 
+/** @brief Compile-time traits for paradigm. */
 template<class P1, class P2 = P1>
 struct ParadigmTraits;
 
+/** @brief Compile-time traits for paradigm. */
 template<>
 struct ParadigmTraits<ExactTag, ExactTag> {
     using Weaker = ExactTag;
@@ -136,6 +163,7 @@ struct ParadigmTraits<ExactTag, ExactTag> {
     using NextWeaker = EffectiveTag;
 };
 
+/** @brief Compile-time traits for paradigm. */
 template<>
 struct ParadigmTraits<EffectiveTag, EffectiveTag> {
     using Weaker = EffectiveTag;
@@ -143,6 +171,7 @@ struct ParadigmTraits<EffectiveTag, EffectiveTag> {
     using NextWeaker = ValidatedTag;
 };
 
+/** @brief Compile-time traits for paradigm. */
 template<>
 struct ParadigmTraits<ValidatedTag, ValidatedTag> {
     using Weaker = ValidatedTag;
@@ -150,6 +179,7 @@ struct ParadigmTraits<ValidatedTag, ValidatedTag> {
     using NextWeaker = ApproximateTag;
 };
 
+/** @brief Compile-time traits for paradigm. */
 template<>
 struct ParadigmTraits<ApproximateTag, ApproximateTag> {
   private:
@@ -161,61 +191,73 @@ struct ParadigmTraits<ApproximateTag, ApproximateTag> {
     using NextWeaker = Void;
 };
 
+/** @brief Compile-time traits for paradigm. */
 template<>
 struct ParadigmTraits<ExactTag, EffectiveTag> {
     using Stronger = ExactTag;
     using Weaker = EffectiveTag;
 };
+/** @brief Compile-time traits for paradigm. */
 template<>
 struct ParadigmTraits<ExactTag, ValidatedTag> {
     using Stronger = ExactTag;
     using Weaker = ValidatedTag;
 };
+/** @brief Compile-time traits for paradigm. */
 template<>
 struct ParadigmTraits<ExactTag, ApproximateTag> {
     using Stronger = ExactTag;
     using Weaker = ApproximateTag;
 };
+/** @brief Compile-time traits for paradigm. */
 template<>
 struct ParadigmTraits<EffectiveTag, ExactTag> {
     using Stronger = ExactTag;
     using Weaker = EffectiveTag;
 };
+/** @brief Compile-time traits for paradigm. */
 template<>
 struct ParadigmTraits<EffectiveTag, ValidatedTag> {
     using Stronger = EffectiveTag;
     using Weaker = ValidatedTag;
 };
+/** @brief Compile-time traits for paradigm. */
 template<>
 struct ParadigmTraits<EffectiveTag, ApproximateTag> {
     using Stronger = EffectiveTag;
     using Weaker = ApproximateTag;
 };
+/** @brief Compile-time traits for paradigm. */
 template<>
 struct ParadigmTraits<ValidatedTag, ExactTag> {
     using Stronger = ExactTag;
     using Weaker = ValidatedTag;
 };
+/** @brief Compile-time traits for paradigm. */
 template<>
 struct ParadigmTraits<ValidatedTag, EffectiveTag> {
     using Stronger = EffectiveTag;
     using Weaker = ValidatedTag;
 };
+/** @brief Compile-time traits for paradigm. */
 template<>
 struct ParadigmTraits<ValidatedTag, ApproximateTag> {
     using Stronger = ValidatedTag;
     using Weaker = ApproximateTag;
 };
+/** @brief Compile-time traits for paradigm. */
 template<>
 struct ParadigmTraits<ApproximateTag, ExactTag> {
     using Stronger = ExactTag;
     using Weaker = ApproximateTag;
 };
+/** @brief Compile-time traits for paradigm. */
 template<>
 struct ParadigmTraits<ApproximateTag, EffectiveTag> {
     using Stronger = EffectiveTag;
     using Weaker = ApproximateTag;
 };
+/** @brief Compile-time traits for paradigm. */
 template<>
 struct ParadigmTraits<ApproximateTag, ValidatedTag> {
     using Stronger = ValidatedTag;
