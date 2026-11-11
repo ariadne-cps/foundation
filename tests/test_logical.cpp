@@ -22,17 +22,16 @@
  *  along with Ariadne Foundation. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "utility/metaprogramming.hpp"
-#include "utility/array.hpp"
-#include "foundation/paradigm.hpp"
+#include <limits>
+
 #include "foundation/logical.hpp"
+#include "foundation/paradigm.hpp"
+#include "utility/array.hpp"
+#include "utility/metaprogramming.hpp"
 
 #include "ariadne-testing.hpp"
 
-#include <limits>
-
 using namespace Ariadne;
-
 
 namespace {
 
@@ -43,9 +42,11 @@ bool same_logical_value(LogicalValue lhs, LogicalValue rhs) {
 class DelayedLogical final : public LogicalInterface {
     Nat _threshold;
     LogicalValue _value;
+
   public:
     DelayedLogical(Nat threshold, LogicalValue value)
-        : _threshold(threshold), _value(value) { }
+        : _threshold(threshold), _value(value) {}
+
   private:
     LogicalInterface* _copy() const override { return new DelayedLogical(*this); }
     LogicalValue _check(Effort effort) const override {
@@ -59,10 +60,12 @@ class DelayedLogical final : public LogicalInterface {
 class TrackedLogical final : public LogicalInterface {
     Int& _destructions;
     LogicalValue _value;
+
   public:
     TrackedLogical(Int& destructions, LogicalValue value)
-        : _destructions(destructions), _value(value) { }
+        : _destructions(destructions), _value(value) {}
     ~TrackedLogical() override { ++_destructions; }
+
   private:
     LogicalInterface* _copy() const override { return new TrackedLogical(*this); }
     LogicalValue _check(Effort) const override { return _value; }
@@ -71,9 +74,7 @@ class TrackedLogical final : public LogicalInterface {
 
 } // namespace
 
-
-class TestLogical : public Ariadne::Testing::ContextFixture
-{
+class TestLogical : public Ariadne::Testing::ContextFixture {
   public:
     using ContextFixture::ContextFixture;
     Void test_concept();
@@ -88,10 +89,9 @@ class TestLogical : public Ariadne::Testing::ContextFixture
     Void test_class_names();
 };
 
-
 int main(int argc, char** argv) {
-    std::cout<<std::setprecision(20);
-    std::cerr<<std::setprecision(20);
+    std::cout << std::setprecision(20);
+    std::cerr << std::setprecision(20);
     ARIADNE_TESTING_SUITE("logical");
     ARIADNE_TESTING_ADD_TEST(TestLogical, test_conversion_to_bool);
     ARIADNE_TESTING_ADD_TEST(TestLogical, test_conversion);
@@ -105,21 +105,18 @@ int main(int argc, char** argv) {
     return ARIADNE_TESTING_RUN_TESTS_WITH_ARGS(argc, argv);
 }
 
-
-Void
-TestLogical::test_concept()
-{
+Void TestLogical::test_concept() {
     // Check to see if we can perform operations on computational and specification logical types
     LogicalType<ExactTag> xl(true);
     LogicalType<EffectiveTag> el(true);
     LogicalType<ValidatedTag> vl(true);
     Effort eff(0);
 
-    vl=el.check(eff);
-    vl=check(el,eff);
+    vl = el.check(eff);
+    vl = check(el, eff);
 
-    vl=indeterminate;
-    vl=LogicalType<ValidatedTag>(LogicalValue::LIKELY);
+    vl = indeterminate;
+    vl = LogicalType<ValidatedTag>(LogicalValue::LIKELY);
 
     xl = xl && xl;
     el = xl && el;
@@ -128,67 +125,62 @@ TestLogical::test_concept()
     vl = vl && vl;
 }
 
-Void
-TestLogical::test_conversion_to_bool()
-{
-    ARIADNE_TESTING_PROVE((Convertible<Boolean,Bool>));
-    ARIADNE_TESTING_PROVE((not Convertible<Sierpinskian,Bool>));
-    ARIADNE_TESTING_PROVE((not Convertible<NegatedSierpinskian,Bool>));
-    ARIADNE_TESTING_PROVE((not Convertible<Kleenean,Bool>));
-    ARIADNE_TESTING_PROVE((not Convertible<LowerKleenean,Bool>));
-    ARIADNE_TESTING_PROVE((not Convertible<UpperKleenean,Bool>));
-    ARIADNE_TESTING_PROVE((not Convertible<ValidatedKleenean,Bool>));
-    ARIADNE_TESTING_PROVE((not Convertible<ValidatedUpperKleenean,Bool>));
-    ARIADNE_TESTING_PROVE((not Convertible<ValidatedLowerKleenean,Bool>));
-    ARIADNE_TESTING_PROVE((not Convertible<ApproximateKleenean,Bool>));
+Void TestLogical::test_conversion_to_bool() {
+    ARIADNE_TESTING_PROVE((Convertible<Boolean, Bool>));
+    ARIADNE_TESTING_PROVE((not Convertible<Sierpinskian, Bool>));
+    ARIADNE_TESTING_PROVE((not Convertible<NegatedSierpinskian, Bool>));
+    ARIADNE_TESTING_PROVE((not Convertible<Kleenean, Bool>));
+    ARIADNE_TESTING_PROVE((not Convertible<LowerKleenean, Bool>));
+    ARIADNE_TESTING_PROVE((not Convertible<UpperKleenean, Bool>));
+    ARIADNE_TESTING_PROVE((not Convertible<ValidatedKleenean, Bool>));
+    ARIADNE_TESTING_PROVE((not Convertible<ValidatedUpperKleenean, Bool>));
+    ARIADNE_TESTING_PROVE((not Convertible<ValidatedLowerKleenean, Bool>));
+    ARIADNE_TESTING_PROVE((not Convertible<ApproximateKleenean, Bool>));
 }
 
-Void
-TestLogical::test_conversion()
-{
-    if(Convertible<LogicalType<EffectiveTag>,LogicalType<ValidatedTag>>) {
+Void TestLogical::test_conversion() {
+    if (Convertible<LogicalType<EffectiveTag>, LogicalType<ValidatedTag>>) {
         this->ctx().note("EffectiveTag logical types may be converted to values using default Effort.");
-    } else if(Convertible<LogicalType<EffectiveTag>,LogicalType<ValidatedTag>>) {
+    } else if (Convertible<LogicalType<EffectiveTag>, LogicalType<ValidatedTag>>) {
         this->ctx().note("EffectiveTag logical types may be explicitly converted to values using default Effort.");
     } else {
         this->ctx().note("EffectiveTag logical types cannot be converted to values; the Effort used must be specified.");
     }
 
     try {
-        if(decide(indeterminate)) {
+        if (decide(indeterminate)) {
             this->ctx().note("decide(...) is true on INDETERMINATE value.");
         } else {
             this->ctx().note("decide(...) is false on INDETERMINATE value.");
         }
-    } catch(...) {
+    } catch (...) {
         this->ctx().note("decide(...) is throws error on INDETERMINATE value.");
     }
 
-    ARIADNE_TESTING_PROVE((not Convertible<Indeterminate,Boolean>));
-    ARIADNE_TESTING_PROVE((Convertible<Indeterminate,Sierpinskian>));
-    ARIADNE_TESTING_PROVE((Convertible<Indeterminate,NegatedSierpinskian>));
-    ARIADNE_TESTING_PROVE((Convertible<Indeterminate,Kleenean>));
-    ARIADNE_TESTING_PROVE((Convertible<Indeterminate,LowerKleenean>));
-    ARIADNE_TESTING_PROVE((Convertible<Indeterminate,UpperKleenean>));
-//    ARIADNE_TESTING_PROVE((Same<decltype(indeterminate and true),Kleenean>));
-//    ARIADNE_TESTING_PROVE((Same<decltype(indeterminate and Boolean(true)),Kleenean>));
-    ARIADNE_TESTING_PROVE((Same<decltype(indeterminate and Sierpinskian(true)),Sierpinskian>));
-    ARIADNE_TESTING_PROVE((Same<decltype(indeterminate and Kleenean(true)),Kleenean>));
+    ARIADNE_TESTING_PROVE((not Convertible<Indeterminate, Boolean>));
+    ARIADNE_TESTING_PROVE((Convertible<Indeterminate, Sierpinskian>));
+    ARIADNE_TESTING_PROVE((Convertible<Indeterminate, NegatedSierpinskian>));
+    ARIADNE_TESTING_PROVE((Convertible<Indeterminate, Kleenean>));
+    ARIADNE_TESTING_PROVE((Convertible<Indeterminate, LowerKleenean>));
+    ARIADNE_TESTING_PROVE((Convertible<Indeterminate, UpperKleenean>));
+    //    ARIADNE_TESTING_PROVE((Same<decltype(indeterminate and true),Kleenean>));
+    //    ARIADNE_TESTING_PROVE((Same<decltype(indeterminate and Boolean(true)),Kleenean>));
+    ARIADNE_TESTING_PROVE((Same<decltype(indeterminate and Sierpinskian(true)), Sierpinskian>));
+    ARIADNE_TESTING_PROVE((Same<decltype(indeterminate and Kleenean(true)), Kleenean>));
 
-    LogicalType<ValidatedTag> vl(LogicalValue::LIKELY); this->ctx().inspect("vl", vl);
-    ARIADNE_TESTING_EXPECT_EQUAL(definitely(vl),false);
-    ARIADNE_TESTING_EXPECT_EQUAL(possibly(vl),true);
-    ARIADNE_TESTING_EXPECT_EQUAL(decide(vl),true);
+    LogicalType<ValidatedTag> vl(LogicalValue::LIKELY);
+    this->ctx().inspect("vl", vl);
+    ARIADNE_TESTING_EXPECT_EQUAL(definitely(vl), false);
+    ARIADNE_TESTING_EXPECT_EQUAL(possibly(vl), true);
+    ARIADNE_TESTING_EXPECT_EQUAL(decide(vl), true);
 
-    LogicalType<ValidatedTag> vi(LogicalValue::INDETERMINATE); this->ctx().inspect("vi", vi);
-    ARIADNE_TESTING_EXPECT_EQUAL(definitely(vl),false);
-    ARIADNE_TESTING_EXPECT_EQUAL(possibly(vl),true);
+    LogicalType<ValidatedTag> vi(LogicalValue::INDETERMINATE);
+    this->ctx().inspect("vi", vi);
+    ARIADNE_TESTING_EXPECT_EQUAL(definitely(vl), false);
+    ARIADNE_TESTING_EXPECT_EQUAL(possibly(vl), true);
 }
 
-
-Void
-TestLogical::test_effort()
-{
+Void TestLogical::test_effort() {
     Effort::set_default(3u);
     ARIADNE_TESTING_EXPECT_EQUAL(Effort::get_default().work(), Nat(3u));
 
@@ -209,9 +201,7 @@ TestLogical::test_effort()
     Effort::set_default(0u);
 }
 
-Void
-TestLogical::test_logical_values()
-{
+Void TestLogical::test_logical_values() {
     using Detail::decide;
     using Detail::definitely;
     using Detail::is_determinate;
@@ -269,9 +259,7 @@ TestLogical::test_logical_values()
     ARIADNE_TESTING_EXPECT_THROWS(std::runtime_error, to_string(static_cast<LogicalValue>(99)));
 }
 
-Void
-TestLogical::test_handles()
-{
+Void TestLogical::test_handles() {
     Effort effort(0u);
     LogicalHandle t = LogicalHandle::constant(LogicalValue::TRUE);
     LogicalHandle f = LogicalHandle::constant(LogicalValue::FALSE);
@@ -341,33 +329,29 @@ TestLogical::test_handles()
     delete validated_ptr;
 }
 
-Void
-TestLogical::test_owned_pointer_conversion()
-{
+Void TestLogical::test_owned_pointer_conversion() {
     Effort effort(0u);
-    Int destructions=0;
+    Int destructions = 0;
     {
         Kleenean owned = Detail::logical_type_from_owned_pointer<EffectiveTag>(
             new TrackedLogical(destructions, LogicalValue::TRUE));
-        ARIADNE_TESTING_EXPECT_EQUAL(definitely(owned,effort),true);
-        ARIADNE_TESTING_EXPECT_EQUAL(destructions,0);
+        ARIADNE_TESTING_EXPECT_EQUAL(definitely(owned, effort), true);
+        ARIADNE_TESTING_EXPECT_EQUAL(destructions, 0);
     }
-    ARIADNE_TESTING_EXPECT_EQUAL(destructions,1);
+    ARIADNE_TESTING_EXPECT_EQUAL(destructions, 1);
 
     // A value conversion releases a concrete logical object after extraction.
     ValidatedKleenean value = Detail::logical_type_from_owned_pointer<ValidatedTag>(
         Detail::new_logical_pointer_from_value(LogicalValue::LIKELY));
-    ARIADNE_TESTING_EXPECT_EQUAL(probably(value),true);
+    ARIADNE_TESTING_EXPECT_EQUAL(probably(value), true);
 
     // Failed conversions must also release the original allocation.
     ARIADNE_TESTING_EXPECT_THROWS(std::runtime_error, Detail::logical_type_from_owned_pointer<ValidatedTag>(
-            new TrackedLogical(destructions,LogicalValue::TRUE)));
-    ARIADNE_TESTING_EXPECT_EQUAL(destructions,2);
+                                                          new TrackedLogical(destructions, LogicalValue::TRUE)));
+    ARIADNE_TESTING_EXPECT_EQUAL(destructions, 2);
 }
 
-Void
-TestLogical::test_types()
-{
+Void TestLogical::test_types() {
     Effort effort(0u);
     Effort::set_default(0u);
 
@@ -533,14 +517,12 @@ TestLogical::test_types()
     ARIADNE_TESTING_EXPECT_EQUAL(decide(indeterminate, effort), false);
     ARIADNE_TESTING_EXPECT_EQUAL(decide(indeterminate), false);
 
-    Case<ValidatedKleenean,Int> logical_case(vk_bool, 17);
+    Case<ValidatedKleenean, Int> logical_case(vk_bool, 17);
     ARIADNE_TESTING_EXPECT_EQUAL(definitely(logical_case.condition()), true);
     ARIADNE_TESTING_EXPECT_EQUAL(logical_case.term(), 17);
 }
 
-Void
-TestLogical::test_nondeterminism()
-{
+Void TestLogical::test_nondeterminism() {
     ARIADNE_TESTING_EXPECT_EQUAL(static_cast<bool>(choose(LowerKleenean(true), LowerKleenean(false))), true);
     ARIADNE_TESTING_EXPECT_EQUAL(static_cast<bool>(choose(LowerKleenean(false), LowerKleenean(true))), false);
 
@@ -549,19 +531,16 @@ TestLogical::test_nondeterminism()
     ARIADNE_TESTING_EXPECT_EQUAL(static_cast<bool>(choose(delayed_true, LowerKleenean(false))), true);
     ARIADNE_TESTING_EXPECT_EQUAL(static_cast<bool>(choose(LowerKleenean(false), delayed_false)), false);
 
-    Array<LowerKleenean> immediate { LowerKleenean(false), LowerKleenean(true) };
+    Array<LowerKleenean> immediate{LowerKleenean(false), LowerKleenean(true)};
     ARIADNE_TESTING_EXPECT_EQUAL(nondeterministic_choose_index(immediate), SizeType(1u));
 
-    Array<LowerKleenean> delayed {
+    Array<LowerKleenean> delayed{
         LowerKleenean(false),
-        LowerKleenean(LogicalHandle(new DelayedLogical(2u, LogicalValue::TRUE)))
-    };
+        LowerKleenean(LogicalHandle(new DelayedLogical(2u, LogicalValue::TRUE)))};
     ARIADNE_TESTING_EXPECT_EQUAL(nondeterministic_choose_index(delayed), SizeType(1u));
 }
 
-Void
-TestLogical::test_class_names()
-{
+Void TestLogical::test_class_names() {
     ARIADNE_TESTING_EXPECT_EQUAL(class_name<ExactTag>(), String("Exact"));
     ARIADNE_TESTING_EXPECT_EQUAL(class_name<EffectiveTag>(), String("Effective"));
     ARIADNE_TESTING_EXPECT_EQUAL(class_name<ValidatedTag>(), String("Validated"));
